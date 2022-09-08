@@ -36,6 +36,7 @@ public class ConfigGetters {
     public static int maxPokemonScaleLevel;
     public static int maxPokemon;
     public static String highIVSoundID;
+    public static boolean playShinyNoise;
     public static double aggressiveChance;
     public static List<String> blacklistedSpawnPokemon;
     public static boolean removeEternatus;
@@ -145,6 +146,7 @@ public class ConfigGetters {
         maxPokemonScaleLevel = ConfigManager.getConfigNode(2, "Max-Scaled-Level").getInt();
         maxPokemon = ConfigManager.getConfigNode(2, "Max-Pokemon-Per-Player").getInt();
         highIVSoundID = ConfigManager.getConfigNode(2, "Play-High-IV-Sound").getString();
+        playShinyNoise = ConfigManager.getConfigNode(2, "Play-Shiny-Noise").getBoolean();
         aggressiveChance = ConfigManager.getConfigNode(2, "Pokemon-Aggressive").getDouble();
         blacklistedSpawnPokemon = ConfigManager.getConfigNode(2, "Pokemon-Blacklist").getList(TypeToken.of(String.class));
         removeEternatus = ConfigManager.getConfigNode(2, "Remove-Eternatus-From-Normal-Spawner").getBoolean();

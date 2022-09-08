@@ -22,22 +22,29 @@ import com.lypaka.lypakautils.WorldDimGetter;
 import com.pixelmongenerations.api.pokemon.PokemonSpec;
 import com.pixelmongenerations.api.spawning.conditions.WorldTime;
 import com.pixelmongenerations.common.block.tileEntities.TileEntityScarecrow;
+import com.pixelmongenerations.common.entity.ai.AISwimming;
+import com.pixelmongenerations.common.entity.ai.AITempt;
 import com.pixelmongenerations.common.entity.pixelmon.EntityPixelmon;
 import com.pixelmongenerations.common.entity.pixelmon.EnumAggression;
 import com.pixelmongenerations.core.config.PixelmonConfig;
+import com.pixelmongenerations.core.config.PixelmonItems;
+import com.pixelmongenerations.core.database.SpawnLocation;
 import com.pixelmongenerations.core.enums.EnumType;
 import com.pixelmongenerations.core.event.RepelHandler;
 import com.pixelmongenerations.core.storage.PixelmonStorage;
 import com.pixelmongenerations.core.storage.PlayerStorage;
+import com.pixelmongenerations.core.util.PixelSounds;
 import com.pixelmongenerations.core.util.PixelmonMethods;
 import com.pixelmongenerations.core.util.helper.BlockHelper;
 import com.pixelmongenerations.core.util.helper.RandomHelper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -430,7 +437,15 @@ public class PokemonSpawner {
 
                                         } else {
 
-                                            safeSpawn = new BlockPos(spawnX, player.world.getTopSolidOrLiquidBlock(baseSpawn).getY(), spawnZ);
+                                            if (location.contains("water")) {
+
+                                                safeSpawn = new BlockPos(spawnX, player.getPosition().getY(), spawnZ);
+
+                                            } else {
+
+                                                safeSpawn = new BlockPos(spawnX, player.world.getTopSolidOrLiquidBlock(baseSpawn).getY(), spawnZ);
+
+                                            }
 
                                         }
 
@@ -528,6 +543,7 @@ public class PokemonSpawner {
                                 pokemon = PokemonUtils.validatePokemon(pokemon, level);
                                 pokemon.setLocationAndAngles(x + RandomHelper.getRandomNumberBetween(2.75f, 6f), y, z + RandomHelper.getRandomNumberBetween(2.75f, 6f),0, 0);
                                 pokemon.updateStats();
+                                pokemon.setSpawnLocation(pokemon.getDefaultSpawnLocation());
                                 boolean hostile = false;
 
                                 if (selectedSpawn.isHostile()) {
@@ -852,6 +868,11 @@ public class PokemonSpawner {
                                             shinySpawnEvent.getPokemon().setGmaxFactor(finalGmax);
                                             shinySpawnEvent.getPokemon().setShiny(true);
                                             player.world.spawnEntity(shinySpawnEvent.getPokemon());
+                                            if (ConfigGetters.playShinyNoise) {
+
+                                                player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 1.0f, 1.0f);
+
+                                            }
                                             PokemonCounter.increment(shinySpawnEvent.getPokemon(), player.getUniqueID());
                                             PokemonCounter.addPokemon(shinySpawnEvent.getPokemon(), player.getUniqueID());
 

@@ -355,6 +355,20 @@ public class ConfigUpdater {
 
         }
 
+        /** Version 1.6.6 */
+        if (ConfigManager.getConfigNode(2, "Play-Shiny-Noise").isVirtual()) {
+
+            if (!needsSaving) {
+
+                needsSaving = true;
+
+            }
+
+            ConfigManager.getConfigNode(2, "Play-Shiny-Noise").setComment("Plays the Pixelmon shiny noise (the one that Ninja wanted and had changed without asking anyone) when a shiny spawns, if set to true");
+            ConfigManager.getConfigNode(2, "Play-Shiny-Noise").setValue(true);
+
+        }
+
         if (needsSaving) {
 
             ConfigManager.save();
