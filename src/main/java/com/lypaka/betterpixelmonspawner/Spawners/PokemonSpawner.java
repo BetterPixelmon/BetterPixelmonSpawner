@@ -663,14 +663,63 @@ public class PokemonSpawner {
 
                                                     if (RandomHelper.getRandomChance(ConfigGetters.particleChance)) {
 
-                                                        String randomParticle;
-                                                        if (possibleParticles.size() == 1) {
+                                                        String randomParticle = null;
+                                                        for (String t : possibleParticles) {
 
-                                                            randomParticle = possibleParticles.get(0);
+                                                            if (t.contains(":")) {
 
-                                                        } else {
+                                                                String[] textSplit = t.split(":");
+                                                                String species = textSplit[0];
+                                                                if (species.contains("-")) {
 
-                                                            randomParticle = possibleParticles.get(BetterPixelmonSpawner.random.nextInt(possibleParticles.size()));
+                                                                    String pokeForm = species.split("-")[1];
+                                                                    int formToBe;
+                                                                    if (pokeForm.equalsIgnoreCase("alolan")) {
+
+                                                                        formToBe = 3;
+
+                                                                    } else if (pokeForm.equalsIgnoreCase("galarian")) {
+
+                                                                        formToBe = 10;
+
+                                                                    } else {
+
+                                                                        formToBe = 11;
+
+                                                                    }
+
+                                                                    if (pokemon.getForm() == formToBe && pokemon.getPokemonName().equalsIgnoreCase(species)) {
+
+                                                                        randomParticle = textSplit[1];
+                                                                        break;
+
+                                                                    }
+
+                                                                } else {
+
+                                                                    if (pokemon.getPokemonName().equalsIgnoreCase(species)) {
+
+                                                                        randomParticle = textSplit[1];
+                                                                        break;
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                        if (randomParticle == null) {
+
+                                                            if (possibleParticles.size() == 1) {
+
+                                                                randomParticle = possibleParticles.get(0);
+
+                                                            } else {
+
+                                                                randomParticle = possibleParticles.get(BetterPixelmonSpawner.random.nextInt(possibleParticles.size()));
+
+                                                            }
 
                                                         }
                                                         if (randomParticle.contains(":")) {
@@ -704,14 +753,63 @@ public class PokemonSpawner {
 
                                                     if (RandomHelper.getRandomChance(ConfigGetters.textureChance)) {
 
-                                                        String randomTexture;
-                                                        if (possibleTextures.size() == 1) {
+                                                        String randomTexture = null;
+                                                        for (String t : possibleTextures) {
 
-                                                            randomTexture = possibleTextures.get(0);
+                                                            if (t.contains(":")) {
 
-                                                        } else {
+                                                                String[] textSplit = t.split(":");
+                                                                String species = textSplit[0];
+                                                                if (species.contains("-")) {
 
-                                                            randomTexture = possibleTextures.get(BetterPixelmonSpawner.random.nextInt(possibleTextures.size()));
+                                                                    String pokeForm = species.split("-")[1];
+                                                                    int formToBe;
+                                                                    if (pokeForm.equalsIgnoreCase("alolan")) {
+
+                                                                        formToBe = 3;
+
+                                                                    } else if (pokeForm.equalsIgnoreCase("galarian")) {
+
+                                                                        formToBe = 10;
+
+                                                                    } else {
+
+                                                                        formToBe = 11;
+
+                                                                    }
+
+                                                                    if (pokemon.getForm() == formToBe && pokemon.getPokemonName().equalsIgnoreCase(species)) {
+
+                                                                        randomTexture = textSplit[1];
+                                                                        break;
+
+                                                                    }
+
+                                                                } else {
+
+                                                                    if (pokemon.getPokemonName().equalsIgnoreCase(species)) {
+
+                                                                        randomTexture = textSplit[1];
+                                                                        break;
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                        if (randomTexture == null) {
+
+                                                            if (possibleTextures.size() == 1) {
+
+                                                                randomTexture = possibleTextures.get(0);
+
+                                                            } else {
+
+                                                                randomTexture = possibleTextures.get(BetterPixelmonSpawner.random.nextInt(possibleTextures.size()));
+
+                                                            }
 
                                                         }
 

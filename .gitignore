@@ -4457,3 +4457,46 @@ build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/LegendarySpawn
 build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/MiscSpawner.java
 build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/NPCSpawner.java
 build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/PokemonSpawner.java
+.gradle/4.10.3/fileHashes/fileHashes.bin
+.gradle/4.10.3/fileHashes/fileHashes.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+build/libs/BetterPixelmonSpawner-1.6.7.jar
+build/resources/main/assets/betterpixelmonspawner/heldItems.conf
+build/resources/main/assets/betterpixelmonspawner/pokemon/silvally-normal.conf
+build/sources/main/java/com/lypaka/betterpixelmonspawner/BetterPixelmonSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Config/ConfigGetters.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Config/ConfigManager.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Holidays/Holiday.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Holidays/HolidayHandler.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/LegendarySpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/MiscSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/NPCSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/PokemonSpawner.java
+build/tmp/extractAnnotationsJar/input3048532021388275550.jar
+build/tmp/extractAnnotationsJar/input3641483954651986720.jar
+build/tmp/extractAnnotationsJar/input4882962523331485955.jar
+build/tmp/extractAnnotationsJar/input6976464673469892169.jar
+build/tmp/extractAnnotationsJar/input8108319177034013635.jar
+build/tmp/reobfJar/reobf-default3265039038886264069.srg
+build/tmp/reobfJar/reobf-default4162678332862114917.srg
+build/tmp/reobfJar/reobf-default4672507838241858191.srg
+build/tmp/reobfJar/reobf-default5633291001278015314.srg
+build/tmp/reobfJar/reobf-default9024910542626329732.srg
+build/tmp/reobfJar/reobf-extraLines3544826758109596198.srg
+build/tmp/reobfJar/reobf-extraLines4420319950759545144.srg
+build/tmp/reobfJar/reobf-extraLines5569006842350705699.srg
+build/tmp/reobfJar/reobf-extraLines5795899575282308779.srg
+build/tmp/reobfJar/reobf-extraLines7284791063148441653.srg
+run/logs/2022-09-08-2.log.gz
+run/logs/2022-09-08-3.log.gz
+run/logs/2022-09-11-1.log.gz
+run/logs/2022-09-11-2.log.gz
+run/saves/New World/advancements/989691b1-d197-3995-a55e-281cda3663ae.json
+run/saves/New World/advancements/b5b2ff24-9e23-373f-97d2-19884357bdea.json
+run/saves/New World/playerdata/989691b1-d197-3995-a55e-281cda3663ae.dat
+run/saves/New World/playerdata/b5b2ff24-9e23-373f-97d2-19884357bdea.dat
+run/saves/New World/pokemon/989691b1-d197-3995-a55e-281cda3663ae.pk
+run/saves/New World/pokemon/b5b2ff24-9e23-373f-97d2-19884357bdea.pk
+run/saves/New World/stats/989691b1-d197-3995-a55e-281cda3663ae.json
+run/saves/New World/stats/b5b2ff24-9e23-373f-97d2-19884357bdea.json
+run/screenshots/2022-09-11_01.12.14.png

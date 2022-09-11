@@ -48,8 +48,10 @@ public class ConfigManager {
     }
 
     public static void load() {
+        String fileName = "";
         try {
             for (int i = 0; i < FILE_NAMES.length; i++) {
+                fileName = FILE_NAMES[i];
                 config[i] = dir.resolve(FILE_NAMES[i]);
 
                 if (!config[i].toFile().exists()) {
@@ -68,7 +70,7 @@ public class ConfigManager {
                 configNode[i] = configurationLoader.load();
             }
         } catch (IOException e) {
-            BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner configuration could not load.");
+            BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner configuration could not load file " + fileName + ".");
             e.printStackTrace();
         }
     }

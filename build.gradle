@@ -11,16 +11,14 @@ buildscript {
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
     }
 }
 
 apply plugin: 'java'
 apply plugin: "net.minecraftforge.gradle.forge"
-apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'com.lypaka'
-version = '1.6.6'
+version = '1.6.7'
 archivesBaseName = 'BetterPixelmonSpawner'
 
 minecraft {
@@ -41,14 +39,11 @@ repositories {
 }
 
 dependencies {
-    compile 'ninja.leaping.configurate:configurate-hocon:3.3'
-    compile 'com.typesafe:config:1.3.1'
     compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['CustomGens.jar'])
-    compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['LypakaUtils.jar'])
+    compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['LypakaUtils-1.12.2-0.0.5.jar'])
     compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['BetterBosses.jar'])
     compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['GooeyLibs-2.2.0.jar'])
-    compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['PixelBoosters-6.2.3-Generations.jar'])
-    compile 'net.objecthunter:exp4j:0.4.4'
+    compileOnly fileTree(dir: 'C:\\Users\\Ryan\\Documents\\GitHub\\LIBRARIES', include: ['PixelBoosters-6.3.0.jar'])
 }
 
 processResources {
@@ -67,24 +62,5 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
-    }
-}
-
-shadowJar {
-    dependencies {
-        include(dependency('ninja.leaping.configurate:configurate-hocon:3.3'))
-        include(dependency('ninja.leaping.configurate:configurate-core:3.3'))
-        include(dependency('com.typesafe:config:1.3.1'))
-        include(dependency('net.objecthunter:exp4j:0.4.4'))
-    }
-
-    relocate 'com.typesafe', 'shadow.com.typesafe'
-
-    classifier ''
-}
-
-reobf {
-    shadowJar {
-        mappingType = 'SEARGE'
     }
 }

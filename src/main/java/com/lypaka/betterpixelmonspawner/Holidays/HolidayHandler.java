@@ -55,19 +55,7 @@ public class HolidayHandler {
 
                     if (holiday.isWithinDate(holiday.getMonth(), holiday.getDayStart(), holiday.getDayEnd())) {
 
-                        if (!HolidayHandler.activeHolidays.isEmpty()) {
-
-                            for (Holiday h : HolidayHandler.activeHolidays) {
-
-                                if (!h.getName().equalsIgnoreCase(holiday.getName())) {
-
-                                    holiday.activate();
-
-                                }
-
-                            }
-
-                        } else {
+                        if (!holiday.isActive()) {
 
                             holiday.activate();
 

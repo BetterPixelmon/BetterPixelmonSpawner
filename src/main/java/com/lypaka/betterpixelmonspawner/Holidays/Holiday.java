@@ -103,4 +103,10 @@ public class Holiday {
 
     }
 
+    public boolean isActive() {
+
+        return HolidayHandler.activeHolidays.contains(this);
+
+    }
+
 }
