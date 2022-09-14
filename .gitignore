@@ -4500,3 +4500,47 @@ run/saves/New World/pokemon/b5b2ff24-9e23-373f-97d2-19884357bdea.pk
 run/saves/New World/stats/989691b1-d197-3995-a55e-281cda3663ae.json
 run/saves/New World/stats/b5b2ff24-9e23-373f-97d2-19884357bdea.json
 run/screenshots/2022-09-11_01.12.14.png
+.gradle/4.10.3/fileHashes/fileHashes.bin
+.gradle/4.10.3/fileHashes/fileHashes.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+build/libs/BetterPixelmonSpawner-1.6.8.jar
+build/resources/main/assets/betterpixelmonspawner/heldItems.conf
+build/sources/main/java/com/lypaka/betterpixelmonspawner/BetterPixelmonSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Config/ConfigGetters.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Config/ConfigManager.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Holidays/Holiday.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Holidays/HolidayHandler.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/LegendarySpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/MiscSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/NPCSpawner.java
+build/sources/main/java/com/lypaka/betterpixelmonspawner/Spawners/PokemonSpawner.java
+build/tmp/extractAnnotationsJar/input1315533213963672069.jar
+build/tmp/reobfJar/reobf-default2109257401806938159.srg
+build/tmp/reobfJar/reobf-extraLines4326141457867871797.srg
+run/logs/2022-09-11-3.log.gz
+run/logs/2022-09-11-4.log.gz
+run/logs/2022-09-14-1.log.gz
+run/logs/2022-09-14-2.log.gz
+run/logs/2022-09-14-3.log.gz
+run/logs/2022-09-14-4.log.gz
+run/saves/New World/advancements/20e20b8f-a9c3-33a3-bcf3-eb6875f0683d.json
+run/saves/New World/advancements/44915209-9814-3995-87c7-f4dc48b55294.json
+run/saves/New World/advancements/6116e2fa-a2e7-3242-8217-a93e1a963211.json
+run/saves/New World/advancements/ae379d70-8745-301c-b874-9ae51df0fbbc.json
+run/saves/New World/advancements/d4f59999-1785-359b-b48d-ac18df657dda.json
+run/saves/New World/playerdata/20e20b8f-a9c3-33a3-bcf3-eb6875f0683d.dat
+run/saves/New World/playerdata/44915209-9814-3995-87c7-f4dc48b55294.dat
+run/saves/New World/playerdata/6116e2fa-a2e7-3242-8217-a93e1a963211.dat
+run/saves/New World/playerdata/ae379d70-8745-301c-b874-9ae51df0fbbc.dat
+run/saves/New World/playerdata/d4f59999-1785-359b-b48d-ac18df657dda.dat
+run/saves/New World/pokemon/20e20b8f-a9c3-33a3-bcf3-eb6875f0683d.pk
+run/saves/New World/pokemon/44915209-9814-3995-87c7-f4dc48b55294.comp
+run/saves/New World/pokemon/44915209-9814-3995-87c7-f4dc48b55294.pk
+run/saves/New World/pokemon/6116e2fa-a2e7-3242-8217-a93e1a963211.pk
+run/saves/New World/pokemon/ae379d70-8745-301c-b874-9ae51df0fbbc.pk
+run/saves/New World/pokemon/d4f59999-1785-359b-b48d-ac18df657dda.pk
+run/saves/New World/stats/20e20b8f-a9c3-33a3-bcf3-eb6875f0683d.json
+run/saves/New World/stats/44915209-9814-3995-87c7-f4dc48b55294.json
+run/saves/New World/stats/6116e2fa-a2e7-3242-8217-a93e1a963211.json
+run/saves/New World/stats/ae379d70-8745-301c-b874-9ae51df0fbbc.json
+run/saves/New World/stats/d4f59999-1785-359b-b48d-ac18df657dda.json

@@ -145,7 +145,7 @@ public class PokemonSpawner {
 
                                 } else if (mount.onGround) {
 
-                                    if (mount.getPosition().getY() <= 63) {
+                                    if (mount.getPosition().getY() <= 59) {
 
                                         location = "underground";
 
@@ -169,7 +169,7 @@ public class PokemonSpawner {
 
                                 } else if (player.onGround) {
 
-                                    if (player.getPosition().getY() <= 63) {
+                                    if (player.getPosition().getY() <= 59) {
 
                                         location = "underground";
 
@@ -830,6 +830,11 @@ public class PokemonSpawner {
                                                     holidaySpawnEvent.getPlayer().world.spawnEntity(holidaySpawnEvent.getPokemon());
                                                     PokemonCounter.increment(holidaySpawnEvent.getPokemon(), player.getUniqueID());
                                                     PokemonCounter.addPokemon(holidaySpawnEvent.getPokemon(), player.getUniqueID());
+                                                    if (ConfigGetters.playShinyNoise && holidaySpawnEvent.getPokemon().isShiny()) {
+
+                                                        player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
+
+                                                    }
 
                                                 });
                                                 if (doMessage && !ConfigGetters.holidaySpawnMessage.equalsIgnoreCase("")) {
@@ -874,6 +879,11 @@ public class PokemonSpawner {
                                                                 // Sets this tag for the PokeClear to be able to know what a Boss is, in the event of a "normal" Boss
                                                                 bossSpawnEvent.getPokemon().addTag("PixelmonDefaultBoss");
                                                                 PokemonCounter.addPokemon(bossSpawnEvent.getPokemon(), player.getUniqueID());
+                                                                if (ConfigGetters.playShinyNoise && bossSpawnEvent.getPokemon().isShiny()) {
+
+                                                                    player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
+
+                                                                }
 
                                                             });
                                                             continue;
@@ -910,6 +920,11 @@ public class PokemonSpawner {
                                                         player.world.spawnEntity(totemSpawnEvent.getPokemon());
                                                         PokemonCounter.increment(totemSpawnEvent.getPokemon(), player.getUniqueID());
                                                         PokemonCounter.addPokemon(totemSpawnEvent.getPokemon(), player.getUniqueID());
+                                                        if (ConfigGetters.playShinyNoise && totemSpawnEvent.getPokemon().isShiny()) {
+
+                                                            player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
+
+                                                        }
 
                                                     });
                                                     continue;
@@ -942,6 +957,11 @@ public class PokemonSpawner {
                                                         player.world.spawnEntity(alphaSpawnEvent.getPokemon());
                                                         PokemonCounter.increment(alphaSpawnEvent.getPokemon(), player.getUniqueID());
                                                         PokemonCounter.addPokemon(alphaSpawnEvent.getPokemon(), player.getUniqueID());
+                                                        if (ConfigGetters.playShinyNoise && alphaSpawnEvent.getPokemon().isShiny()) {
+
+                                                            player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
+
+                                                        }
 
                                                     });
                                                     continue;
@@ -955,7 +975,7 @@ public class PokemonSpawner {
                                     }
 
                                 }
-                                if (shiny) {
+                                if (shiny || pokemon.isShiny()) {
 
                                     ShinySpawnEvent shinySpawnEvent = new ShinySpawnEvent(pokemon, player, selectedSpawn);
                                     MinecraftForge.EVENT_BUS.post(shinySpawnEvent);
@@ -968,7 +988,7 @@ public class PokemonSpawner {
                                             player.world.spawnEntity(shinySpawnEvent.getPokemon());
                                             if (ConfigGetters.playShinyNoise) {
 
-                                                player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                                                player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
 
                                             }
                                             PokemonCounter.increment(shinySpawnEvent.getPokemon(), player.getUniqueID());
@@ -988,6 +1008,15 @@ public class PokemonSpawner {
 
                                             pokemonSpawnEvent.getPokemon().setGmaxFactor(finalGmax);
                                             player.world.spawnEntity(pokemonSpawnEvent.getPokemon());
+                                            if (pokemonSpawnEvent.getPokemon().isShiny()) {
+
+                                                if (ConfigGetters.playShinyNoise) {
+
+                                                    player.world.playSound(null, player.getPosition(), PixelSounds.shinySpawn, SoundCategory.BLOCKS, 10.0f, 10.0f);
+
+                                                }
+
+                                            }
                                             PokemonCounter.increment(pokemonSpawnEvent.getPokemon(), player.getUniqueID());
                                             PokemonCounter.addPokemon(pokemonSpawnEvent.getPokemon(), player.getUniqueID());
 
