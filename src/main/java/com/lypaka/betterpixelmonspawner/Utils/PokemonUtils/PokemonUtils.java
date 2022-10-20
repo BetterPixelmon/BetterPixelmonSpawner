@@ -7,7 +7,7 @@ import com.pixelmongenerations.core.enums.EnumSpecies;
 
 public class PokemonUtils {
 
-    public static EntityPixelmon validatePokemon (EntityPixelmon pokemon, int spawnLevel) {
+    public static EntityPixelmon validateGenerationsPokemon (EntityPixelmon pokemon, int spawnLevel) {
 
         if (!ConfigGetters.validateSpawns) return pokemon;
         int minimumLevel = pokemon.baseStats.spawnLevel;
@@ -26,6 +26,32 @@ public class PokemonUtils {
                 }
 
             } while (pokemon.baseStats.preEvolutions.length > 0);
+
+        }
+
+        return pokemon;
+
+    }
+
+    public static com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon validateReforgedPokemon (com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon pokemon, int spawnLevel) {
+
+        if (!ConfigGetters.validateSpawns) return pokemon;
+        int minimumLevel = pokemon.getBaseStats().spawnLevel;
+        if (spawnLevel < minimumLevel) {
+
+            do {
+
+                // Pokemon cannot naturally exist at this level, check for previous evolution forms
+                if (pokemon.getBaseStats().preEvolutions.length > 0) {
+
+                    String preEvo = pokemon.getBaseStats().preEvolutions[pokemon.getBaseStats().preEvolutions.length - 1];
+                    com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon newPokemon = com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec.from(preEvo).create(pokemon.world);
+                    newPokemon.setForm(pokemon.getPokemonData().getForm());
+                    pokemon = newPokemon;
+
+                }
+
+            } while (pokemon.getBaseStats().preEvolutions.length > 0);
 
         }
 

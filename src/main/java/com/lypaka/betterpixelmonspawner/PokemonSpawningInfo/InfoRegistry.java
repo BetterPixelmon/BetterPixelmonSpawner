@@ -1,8 +1,10 @@
 package com.lypaka.betterpixelmonspawner.PokemonSpawningInfo;
 
 import com.google.common.reflect.TypeToken;
+import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
+import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
 import com.pixelmongenerations.core.enums.EnumSpecies;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
@@ -29,6 +31,7 @@ public class InfoRegistry {
         legendaryList = new ArrayList<>();
         waterFishList = new ArrayList<>();
         lavaFishList = new ArrayList<>();
+        List<String> erroredNames = new ArrayList<>();
         for (String name : PokemonConfig.fileNames) {
 
             // I could just use the name variable here but I'm too afraid it would fuck something else up by changing it now
@@ -105,90 +108,189 @@ public class InfoRegistry {
                                 }
 
                             }
-                            // Generations teammates, if any of you ever see this, I want you to know that this stupidity line here is ya'lls fault with your "make it all lowercase" bullshit.
-                            EnumSpecies tempSpecies = EnumSpecies.getFromNameAnyCase(pokemonName);
-                            try {
 
-                                if (EnumSpecies.legendaries.contains(tempSpecies.getPokemonName()) || EnumSpecies.ultrabeasts.contains(tempSpecies.getPokemonName()) || ConfigGetters.specialLegendaries.contains(tempSpecies.getPokemonName())) {
+                            if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
 
-                                    LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
-                                    lInfo.register();
-                                    List<LegendarySpawnInfo> lsi = new ArrayList<>();
-                                    if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+                                // Generations teammates, if any of you ever see this, I want you to know that this stupidity line here is ya'lls fault with your "make it all lowercase" bullshit.
+                                EnumSpecies tempSpecies = EnumSpecies.getFromNameAnyCase(pokemonName);
+                                try {
 
-                                        lsi = BiomeList.biomeLegendaryMap.get(biome);
+                                    if (EnumSpecies.legendaries.contains(tempSpecies.getPokemonName()) || EnumSpecies.ultrabeasts.contains(tempSpecies.getPokemonName()) || ConfigGetters.specialLegendaries.contains(tempSpecies.getPokemonName())) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Meltan") && ConfigGetters.removeMeltan) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Eternatus") && ConfigGetters.removeEternatus) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else {
+
+                                        List<PokemonSpawnInfo> psi = new ArrayList<>();
+                                        if (BiomeList.biomePokemonMap.containsKey(biome)) {
+
+                                            psi = BiomeList.biomePokemonMap.get(biome);
+
+                                        }
+                                        PokemonSpawnInfo pInfo = new PokemonSpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        pInfo.register();
+                                        if (spawnLocation.contains("land")) {
+
+                                            landList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("water")) {
+
+                                            waterList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("air")) {
+
+                                            airList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("underground")) {
+
+                                            undergroundList.add(pInfo);
+
+                                        }
+                                        psi.add(pInfo);
+                                        BiomeList.biomePokemonMap.put(biome, psi);
 
                                     }
-                                    lsi.add(lInfo);
-                                    BiomeList.biomeLegendaryMap.put(biome, lsi);
 
-                                } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Meltan") && ConfigGetters.removeMeltan) {
+                                } catch (NullPointerException er) {
 
-                                    LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
-                                    lInfo.register();
-                                    List<LegendarySpawnInfo> lsi = new ArrayList<>();
-                                    if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+                                    if (!erroredNames.contains(pokemonName)) {
 
-                                        lsi = BiomeList.biomeLegendaryMap.get(biome);
+                                        erroredNames.add(pokemonName);
+                                        BetterPixelmonSpawner.logger.error("Couldn't get species from: " + pokemonName);
 
                                     }
-                                    lsi.add(lInfo);
-                                    BiomeList.biomeLegendaryMap.put(biome, lsi);
-
-                                } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Eternatus") && ConfigGetters.removeEternatus) {
-
-                                    LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
-                                    lInfo.register();
-                                    List<LegendarySpawnInfo> lsi = new ArrayList<>();
-                                    if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
-
-                                        lsi = BiomeList.biomeLegendaryMap.get(biome);
-
-                                    }
-                                    lsi.add(lInfo);
-                                    BiomeList.biomeLegendaryMap.put(biome, lsi);
-
-                                } else {
-
-                                    List<PokemonSpawnInfo> psi = new ArrayList<>();
-                                    if (BiomeList.biomePokemonMap.containsKey(biome)) {
-
-                                        psi = BiomeList.biomePokemonMap.get(biome);
-
-                                    }
-                                    PokemonSpawnInfo pInfo = new PokemonSpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
-                                    pInfo.register();
-                                    if (spawnLocation.contains("land")) {
-
-                                        landList.add(pInfo);
-
-                                    }
-                                    if (spawnLocation.contains("water")) {
-
-                                        waterList.add(pInfo);
-
-                                    }
-                                    if (spawnLocation.contains("air")) {
-
-                                        airList.add(pInfo);
-
-                                    }
-                                    if (spawnLocation.contains("underground")) {
-
-                                        undergroundList.add(pInfo);
-
-                                    }
-                                    psi.add(pInfo);
-                                    BiomeList.biomePokemonMap.put(biome, psi);
 
                                 }
 
-                            } catch (NullPointerException er) {
+                            } else {
 
-                                System.out.println("couldn't get species from " + pokemonName);
+                                com.pixelmonmod.pixelmon.enums.EnumSpecies tempSpecies = com.pixelmonmod.pixelmon.enums.EnumSpecies.getFromNameAnyCase(pokemonName);
+                                try {
+
+                                    if (com.pixelmonmod.pixelmon.enums.EnumSpecies.legendaries.contains(tempSpecies) || com.pixelmonmod.pixelmon.enums.EnumSpecies.ultrabeasts.contains(tempSpecies) || ConfigGetters.specialLegendaries.contains(tempSpecies.getPokemonName())) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Meltan") && ConfigGetters.removeMeltan) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else if (tempSpecies.getPokemonName().equalsIgnoreCase("Eternatus") && ConfigGetters.removeEternatus) {
+
+                                        LegendarySpawnInfo lInfo = new LegendarySpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        lInfo.register();
+                                        List<LegendarySpawnInfo> lsi = new ArrayList<>();
+                                        if (BiomeList.biomeLegendaryMap.containsKey(biome)) {
+
+                                            lsi = BiomeList.biomeLegendaryMap.get(biome);
+
+                                        }
+                                        lsi.add(lInfo);
+                                        BiomeList.biomeLegendaryMap.put(biome, lsi);
+
+                                    } else {
+
+                                        List<PokemonSpawnInfo> psi = new ArrayList<>();
+                                        if (BiomeList.biomePokemonMap.containsKey(biome)) {
+
+                                            psi = BiomeList.biomePokemonMap.get(biome);
+
+                                        }
+                                        PokemonSpawnInfo pInfo = new PokemonSpawnInfo(name, biome, time, weather, levelRange, groupSize, spawnChance, spawnLocation, texture, heldItemID, hostile);
+                                        pInfo.register();
+                                        if (spawnLocation.contains("land")) {
+
+                                            landList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("water")) {
+
+                                            waterList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("air")) {
+
+                                            airList.add(pInfo);
+
+                                        }
+                                        if (spawnLocation.contains("underground")) {
+
+                                            undergroundList.add(pInfo);
+
+                                        }
+                                        psi.add(pInfo);
+                                        BiomeList.biomePokemonMap.put(biome, psi);
+
+                                    }
+
+                                } catch (NullPointerException er) {
+
+                                    if (!erroredNames.contains(pokemonName)) {
+
+                                        erroredNames.add(pokemonName);
+                                        BetterPixelmonSpawner.logger.error("Couldn't get species from: " + pokemonName);
+
+                                    }
+
+                                }
 
                             }
-
 
                         } else {
 

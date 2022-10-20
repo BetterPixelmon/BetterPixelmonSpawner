@@ -1,14 +1,7 @@
 package com.lypaka.betterpixelmonspawner.Holidays;
 
 import com.google.common.reflect.TypeToken;
-import com.lypaka.betterpixelmonspawner.API.Spawning.PokemonSpawnEvent;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
-import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Config.ConfigManager;
-import com.lypaka.betterpixelmonspawner.Utils.FancyText;
-import com.pixelmongenerations.common.entity.pixelmon.EntityPixelmon;
-import com.pixelmongenerations.core.util.helper.RandomHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.time.LocalDate;
@@ -74,7 +67,7 @@ public class HolidayHandler {
     public static void loadHolidays() throws ObjectMappingException {
 
         BetterPixelmonSpawner.logger.info("Registering holidays...");
-        Map<String, Map<String, Integer>> holidayMap = ConfigManager.getConfigNode(1, "Holidays").getValue(new TypeToken<Map<String, Map<String, Integer>>>() {});
+        Map<String, Map<String, Integer>> holidayMap = BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays").getValue(new TypeToken<Map<String, Map<String, Integer>>>() {});
         for (Map.Entry<String, Map<String, Integer>> entry : holidayMap.entrySet()) {
 
             String name = entry.getKey();
@@ -83,16 +76,16 @@ public class HolidayHandler {
             int dayStart = values.get("Day-Start");
             int dayEnd = values.get("Day-End");
             List<String> particles = new ArrayList<>();
-            if (!ConfigManager.getConfigNode(1, "Holidays", name, "Special-Textures").isVirtual()) {
+            if (!BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays", name, "Special-Textures").isVirtual()) {
 
-                particles = ConfigManager.getConfigNode(1, "Holidays", name, "Particles").getList(TypeToken.of(String.class));
+                particles = BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays", name, "Particles").getList(TypeToken.of(String.class));
 
             }
-            List<String> pokemon = ConfigManager.getConfigNode(1, "Holidays", name, "Pokemon").getList(TypeToken.of(String.class));
+            List<String> pokemon = BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays", name, "Pokemon").getList(TypeToken.of(String.class));
             List<String> textures = new ArrayList<>();
-            if (!ConfigManager.getConfigNode(1, "Holidays", name, "Special-Textures").isVirtual()) {
+            if (!BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays", name, "Special-Textures").isVirtual()) {
 
-                textures = ConfigManager.getConfigNode(1, "Holidays", name, "Special-Textures").getList(TypeToken.of(String.class));
+                textures = BetterPixelmonSpawner.configManager.getConfigNode(1, "Holidays", name, "Special-Textures").getList(TypeToken.of(String.class));
 
             }
             Holiday holiday = new Holiday(name, month, dayStart, dayEnd, pokemon, particles, textures);

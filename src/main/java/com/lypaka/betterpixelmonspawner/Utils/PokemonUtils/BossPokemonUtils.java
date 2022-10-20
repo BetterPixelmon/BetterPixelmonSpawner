@@ -2,6 +2,7 @@ package com.lypaka.betterpixelmonspawner.Utils.PokemonUtils;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
+import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
 import com.pixelmongenerations.common.entity.npcs.registry.DropItemRegistry;
 import com.pixelmongenerations.common.entity.pixelmon.drops.BossInfo;
 import com.pixelmongenerations.core.enums.EnumBossMode;
@@ -16,7 +17,7 @@ public class BossPokemonUtils {
     private static List<String> possibleBosses = new ArrayList<>();
     public static Map<UUID, Integer> amountMap = new HashMap<>();
 
-    public static void loadBossList() {
+    public static void loadGenerationsBossList() {
 
         possibleBosses = new ArrayList<>();
         for (EnumSpecies species : EnumSpecies.values()) {
@@ -68,10 +69,53 @@ public class BossPokemonUtils {
 
     }
 
+    public static void loadReforgedBossList() {
+
+        possibleBosses = new ArrayList<>();
+        for (com.pixelmonmod.pixelmon.enums.EnumSpecies species : com.pixelmonmod.pixelmon.enums.EnumSpecies.values()) {
+
+            if (com.pixelmonmod.pixelmon.enums.EnumSpecies.legendaries.contains(species) || com.pixelmonmod.pixelmon.enums.EnumSpecies.ultrabeasts.contains(species)) {
+
+                possibleBosses.add(species.getPokemonName());
+
+            } else {
+
+                if (species.hasMega()) {
+
+                    if (!possibleBosses.contains(species.getPokemonName())) {
+
+                        possibleBosses.add(species.getPokemonName());
+
+                    }
+
+                } else if (ConfigGetters.bossesCanBeNormal) {
+
+                    if (!possibleBosses.contains(species.getPokemonName())) {
+
+                        possibleBosses.add(species.getPokemonName());
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
     public static boolean spawnBoss() {
 
         if (ConfigGetters.bossSpawnChance == 0) return false;
-        return RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            return RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
+
+        } else {
+
+            return com.pixelmonmod.pixelmon.RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
+
+        }
 
     }
 
@@ -91,6 +135,30 @@ public class BossPokemonUtils {
             if (Double.compare(entry.getValue(), rng) <= 0) {
 
                 mode = EnumBossMode.valueOf(entry.getKey());
+                break;
+
+            } else {
+
+                rng -= entry.getValue();
+
+            }
+
+        }
+
+        return mode;
+
+    }
+
+    public static com.pixelmonmod.pixelmon.enums.EnumBossMode getReforgedBossMode() {
+
+        com.pixelmonmod.pixelmon.enums.EnumBossMode mode = com.pixelmonmod.pixelmon.enums.EnumBossMode.Uncommon;
+        double sum = ConfigGetters.bossSpawnMap.values().stream().mapToDouble(c -> c).sum();
+        double rng = BetterPixelmonSpawner.random.nextDouble() * sum;
+        for (Map.Entry<String, Double> entry : ConfigGetters.bossSpawnMap.entrySet()) {
+
+            if (Double.compare(entry.getValue(), rng) <= 0) {
+
+                mode = com.pixelmonmod.pixelmon.enums.EnumBossMode.valueOf(entry.getKey());
                 break;
 
             } else {

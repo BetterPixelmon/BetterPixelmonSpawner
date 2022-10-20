@@ -34,6 +34,16 @@ public class NPCCounter {
 
     }
 
+    public static void increment (com.pixelmonmod.pixelmon.entities.npcs.EntityNPC npc, UUID uuid) {
+
+        if (ConfigGetters.maxNPCs <= 0) return;
+        int count = getCount(uuid);
+        int updated = count + 1;
+        npcCountMap.put(uuid, updated);
+        npc.addTag("SpawnedPlayerUUID:" + uuid.toString());
+
+    }
+
     public static void decrement (UUID uuid) {
 
         if (ConfigGetters.maxNPCs <= 0) return;

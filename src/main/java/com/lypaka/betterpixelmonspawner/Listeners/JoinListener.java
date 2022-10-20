@@ -1,7 +1,7 @@
 package com.lypaka.betterpixelmonspawner.Listeners;
 
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Utils.FancyText;
+import com.lypaka.lypakautils.FancyText;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -12,14 +12,12 @@ import java.util.UUID;
 
 public class JoinListener {
 
-    public static Map<UUID, EntityPlayerMP> playerMap = new HashMap<>();
     public static Map<UUID, EntityPlayerMP> pokemonMap = new HashMap<>();
 
     @SubscribeEvent
     public void onJoin (PlayerEvent.PlayerLoggedInEvent event) {
 
         EntityPlayerMP player = (EntityPlayerMP) event.player;
-        playerMap.put(player.getUniqueID(), player);
         if (!pokemonMap.containsKey(player.getUniqueID())) {
 
             pokemonMap.put(player.getUniqueID(), player);
@@ -27,31 +25,24 @@ public class JoinListener {
         }
         if (ConfigGetters.pokemonOptOut.contains(player.getUniqueID().toString())) {
 
-            player.sendMessage(FancyText.getFancyText("&eJust a reminder, you're currently opted out of Pokemon spawns!"));
+            player.sendMessage(FancyText.getFormattedText("&eJust a reminder, you're currently opted out of Pokemon spawns!"));
 
         }
         if (ConfigGetters.miscOptOut.contains(player.getUniqueID().toString())) {
 
-            player.sendMessage(FancyText.getFancyText("&eJust a reminder, you're currently opted out of misc entity spawns!"));
+            player.sendMessage(FancyText.getFormattedText("&eJust a reminder, you're currently opted out of misc entity spawns!"));
 
         }
         if (ConfigGetters.npcOptOut.contains(player.getUniqueID().toString())) {
 
-            player.sendMessage(FancyText.getFancyText("&eJust a reminder, you're currently opted out of NPC spawns!"));
+            player.sendMessage(FancyText.getFormattedText("&eJust a reminder, you're currently opted out of NPC spawns!"));
 
         }
         if (ConfigGetters.legendaryOptOut.contains(player.getUniqueID().toString())) {
 
-            player.sendMessage(FancyText.getFancyText("&eJust a reminder, you're currently opted out of legendary spawns!"));
+            player.sendMessage(FancyText.getFormattedText("&eJust a reminder, you're currently opted out of legendary spawns!"));
 
         }
-
-    }
-
-    @SubscribeEvent
-    public void onLeave (PlayerEvent.PlayerLoggedOutEvent event) {
-
-        playerMap.entrySet().removeIf(entry -> entry.getKey().toString().equals(event.player.getUniqueID().toString()));
 
     }
 

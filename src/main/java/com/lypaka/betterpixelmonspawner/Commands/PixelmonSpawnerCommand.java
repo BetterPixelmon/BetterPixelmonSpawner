@@ -1,8 +1,10 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
+import com.lypaka.betterpixelmonspawner.Commands.Generations.*;
+import com.lypaka.betterpixelmonspawner.Commands.Reforged.*;
 import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
-import com.lypaka.betterpixelmonspawner.Utils.FancyText;
-import com.pixelmongenerations.core.enums.EnumSpecies;
+import com.lypaka.lypakautils.FancyText;
+import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -19,14 +21,28 @@ public class PixelmonSpawnerCommand extends CommandTreeBase {
 
         addSubcommand(new OptCommand());
         addSubcommand(new ReloadCommand());
-        addSubcommand(new ListCommand());
-        addSubcommand(new WhenCommand());
-        addSubcommand(new ForceClearCommand());
-        addSubcommand(new DoLegendarySpawnCommand());
-        addSubcommand(new DebugCommand());
-        addSubcommand(new CheckCountCommand());
-        addSubcommand(new WhereCommand());
         addSubcommand(new LocationCommand());
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            addSubcommand(new GenerationsListCommand());
+            addSubcommand(new GenerationsWhenCommand());
+            addSubcommand(new GenerationsForceClearCommand());
+            addSubcommand(new GenerationsDoLegendarySpawnCommand());
+            addSubcommand(new GenerationsDebugCommand());
+            addSubcommand(new GenerationsCheckCountCommand());
+            addSubcommand(new GenerationsWhereCommand());
+
+        } else {
+
+            addSubcommand(new ReforgedListCommand());
+            addSubcommand(new ReforgedWhenCommand());
+            addSubcommand(new ReforgedForceClearCommand());
+            addSubcommand(new ReforgedDoLegendarySpawnCommand());
+            addSubcommand(new ReforgedDebugCommand());
+            addSubcommand(new ReforgedCheckCountCommand());
+            addSubcommand(new ReforgedWhereCommand());
+
+        }
 
     }
 
@@ -160,7 +176,7 @@ public class PixelmonSpawnerCommand extends CommandTreeBase {
 
         if (args.length < 1) {
 
-            sender.sendMessage(FancyText.getFancyText(getUsage(sender)));
+            sender.sendMessage(FancyText.getFormattedText(getUsage(sender)));
             return;
 
         }
@@ -180,45 +196,117 @@ public class PixelmonSpawnerCommand extends CommandTreeBase {
 
             case "list":
             case "check":
-                ListCommand listCommand = new ListCommand();
-                listCommand.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsListCommand listCommand = new GenerationsListCommand();
+                    listCommand.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedListCommand listCommand = new ReforgedListCommand();
+                    listCommand.execute(server, sender, args);
+
+                }
                 break;
 
             case "when":
-                WhenCommand whenCommand = new WhenCommand();
-                whenCommand.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsWhenCommand whenCommand = new GenerationsWhenCommand();
+                    whenCommand.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedWhenCommand whenCommand = new ReforgedWhenCommand();
+                    whenCommand.execute(server, sender, args);
+
+                }
                 break;
 
             case "lastlegend":
             case "ll":
-                LastLegendCommand llc = new LastLegendCommand();
-                llc.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsLastLegendCommand llc = new GenerationsLastLegendCommand();
+                    llc.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedLastLegendCommand llc = new ReforgedLastLegendCommand();
+                    llc.execute(server, sender, args);
+
+                }
                 break;
 
             case "clear":
-                ForceClearCommand fcc = new ForceClearCommand();
-                fcc.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsForceClearCommand fcc = new GenerationsForceClearCommand();
+                    fcc.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedForceClearCommand fcc = new ReforgedForceClearCommand();
+                    fcc.execute(server, sender, args);
+
+                }
                 break;
 
             case "dolegendaryspawn":
-                DoLegendarySpawnCommand dlspc = new DoLegendarySpawnCommand();
-                dlspc.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsDoLegendarySpawnCommand dlspc = new GenerationsDoLegendarySpawnCommand();
+                    dlspc.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedDoLegendarySpawnCommand dlspc = new ReforgedDoLegendarySpawnCommand();
+                    dlspc.execute(server, sender, args);
+
+                }
                 break;
 
             case "debug":
-                DebugCommand debugCommand = new DebugCommand();
-                debugCommand.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsDebugCommand debugCommand = new GenerationsDebugCommand();
+                    debugCommand.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedDebugCommand debugCommand = new ReforgedDebugCommand();
+                    debugCommand.execute(server, sender, args);
+
+                }
                 break;
 
             case "checkcount":
             case "count":
-                CheckCountCommand ccc = new CheckCountCommand();
-                ccc.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsCheckCountCommand ccc = new GenerationsCheckCountCommand();
+                    ccc.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedCheckCountCommand ccc = new ReforgedCheckCountCommand();
+                    ccc.execute(server, sender, args);
+
+                }
                 break;
 
             case "where":
-                WhereCommand whereCommand = new WhereCommand();
-                whereCommand.execute(server, sender, args);
+                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+                    GenerationsWhereCommand whereCommand = new GenerationsWhereCommand();
+                    whereCommand.execute(server, sender, args);
+
+                } else {
+
+                    ReforgedWhereCommand whereCommand = new ReforgedWhereCommand();
+                    whereCommand.execute(server, sender, args);
+
+                }
                 break;
 
             case "loc":

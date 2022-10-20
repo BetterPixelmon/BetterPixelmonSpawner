@@ -25,11 +25,11 @@ public class PokemonConfig {
     private static final Map<String, CommentedConfigurationNode> configNodes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     public static List<String> fileNames;
 
-    public static void setup (Path folder) {
+    public static void setup (Path folder, String version) {
 
         dir = checkDir(folder);
         fileNames = new ArrayList<>();
-        load();
+        load(version);
 
     }
 
@@ -47,13 +47,13 @@ public class PokemonConfig {
 
     }
 
-    public static void load() {
+    public static void load (String version) {
 
         try {
 
             if (dir.toFile().listFiles().length == 0) {
 
-                String location = "assets/betterpixelmonspawner/pokemon";
+                String location = "assets/betterpixelmonspawner/pokemon/" + version.toLowerCase();
 
                 // directory is empty, load defaults from assets
                 FileSystem fileSystem = FileSystems.newFileSystem(BetterPixelmonSpawner.class.getClassLoader().getResource(location).toURI(), new HashMap<>());

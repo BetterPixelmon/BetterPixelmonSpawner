@@ -3,7 +3,9 @@ package com.lypaka.betterpixelmonspawner.DebugSystem;
 import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
+import com.lypaka.betterpixelmonspawner.Utils.Counters.GenerationsPokemonCounter;
+import com.lypaka.betterpixelmonspawner.Utils.Counters.ReforgedPokemonCounter;
+import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
 import com.pixelmongenerations.core.event.RepelHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 
@@ -46,22 +48,24 @@ public class PokemonDebug {
             }
 
         }
-        if (RepelHandler.hasRepel(player.getUniqueID())) {
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
 
-            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
-            if (spawnHappens) {
+            if (RepelHandler.hasRepel(player.getUniqueID())) {
 
-                spawnHappens = false;
+                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
+                if (spawnHappens) {
+
+                    spawnHappens = false;
+
+                }
 
             }
 
-        }
-        BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + PokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
-        if (PokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
+        } else {
 
-            if (ConfigGetters.maxPokemon != 0) {
+            if (com.pixelmonmod.pixelmon.listener.RepelHandler.hasRepel(player)) {
 
-                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
+                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
                 if (spawnHappens) {
 
                     spawnHappens = false;
@@ -71,6 +75,45 @@ public class PokemonDebug {
             }
 
         }
+
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + GenerationsPokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
+            if (GenerationsPokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
+
+                if (ConfigGetters.maxPokemon != 0) {
+
+                    BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
+                    if (spawnHappens) {
+
+                        spawnHappens = false;
+
+                    }
+
+                }
+
+            }
+
+        } else {
+
+            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + ReforgedPokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
+            if (ReforgedPokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
+
+                if (ConfigGetters.maxPokemon != 0) {
+
+                    BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
+                    if (spawnHappens) {
+
+                        spawnHappens = false;
+
+                    }
+
+                }
+
+            }
+
+        }
+
 
         if (!spawnHappens) {
 

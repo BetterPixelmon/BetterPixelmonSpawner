@@ -4,16 +4,28 @@ import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.DeadZones.DeadZoneRegistry;
 import com.lypaka.betterpixelmonspawner.Commands.PixelmonSpawnerCommand;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Config.ConfigManager;
 import com.lypaka.betterpixelmonspawner.Config.ConfigUpdater;
 import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
 import com.lypaka.betterpixelmonspawner.Holidays.HolidayHandler;
 import com.lypaka.betterpixelmonspawner.Listeners.*;
+import com.lypaka.betterpixelmonspawner.Listeners.Generations.*;
+import com.lypaka.betterpixelmonspawner.Listeners.Reforged.*;
 import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.InfoRegistry;
-import com.lypaka.betterpixelmonspawner.Spawners.*;
-import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
+import com.lypaka.betterpixelmonspawner.Spawners.Generations.*;
+import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedLegendarySpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedMiscSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedNPCSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedPokemonSpawner;
+import com.lypaka.betterpixelmonspawner.Utils.Generations.GenerationsHeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
+import com.lypaka.betterpixelmonspawner.Utils.Reforged.ReforgedHeldItemUtils;
+import com.lypaka.lypakautils.ConfigurationLoaders.BasicConfigManager;
+import com.lypaka.lypakautils.ConfigurationLoaders.ConfigUtils;
+import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
+import com.pixelmonmod.pixelmon.Pixelmon;
+import com.pixelmonmod.pixelmon.api.spawning.SpawnerCoordinator;
+import com.pixelmonmod.pixelmon.spawning.PixelmonSpawning;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -27,7 +39,9 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +52,26 @@ import java.util.Random;
         name = BetterPixelmonSpawner.MOD_NAME,
         version = BetterPixelmonSpawner.VERSION,
         acceptableRemoteVersions = "*",
-        dependencies = "required-after:lypakautils"
+        dependencies = "required-after:lypakautils@[0.0.5,);required-after:pixelmon"
 )
 public class BetterPixelmonSpawner {
 
+    /**
+     * WAIT
+     *
+     * Before you go any further in browsing through my code
+     *
+     * Just know that
+     *
+     * I'm fully aware
+     *
+     * That this mod is extremely fucked up.
+     *
+     * I'm just not gonna be bothered making it clean for two dead versions of Pixelmon. If it works, it works. :shrug:
+     */
     public static final String MOD_ID = "betterpixelmonspawner";
     public static final String MOD_NAME = "BetterPixelmonSpawner";
-    public static final String VERSION = "1.6.0";
+    public static final String VERSION = "2.0.0";
     public static Logger logger = LogManager.getLogger("Better Pixelmon Spawner");
     public static Path dir;
     public static List<String> alolans = new ArrayList<>();
@@ -54,15 +81,18 @@ public class BetterPixelmonSpawner {
     public static LocalDate currentDay = LocalDate.now();
     public static MinecraftServer server;
     public static List<DeadZone> deadZones = new ArrayList<>();
+    public static boolean isPixelBoostersLoaded = false;
+    public static BasicConfigManager configManager;
 
     @Mod.EventHandler
-    public void preInit (FMLPreInitializationEvent event) throws ObjectMappingException {
+    public void preInit (FMLPreInitializationEvent event) throws ObjectMappingException, IOException {
 
-        dir = event.getModConfigurationDirectory().toPath().resolve(MOD_ID);
-        ConfigManager.setup(dir);
-        ConfigUpdater.updateConfig();
-        ConfigGetters.load();
-        PokemonConfig.setup(dir.resolve("pokemon"));
+        dir = ConfigUtils.checkDir(Paths.get("./config/betterpixelmonspawner"));
+        String[] files = new String[]{"generalSettings.conf", "holidays.conf", "pokemonSpawner.conf",
+                "legendarySpawner.conf", "npcSpawner.conf", "miscSpawner.conf", "storage.conf", "deadZones.conf",
+                "last-spawn-list.conf", "heldItems.conf"};
+        configManager = new BasicConfigManager(files, dir, BetterPixelmonSpawner.class, MOD_NAME, MOD_ID, logger);
+        configManager.init();
         loadRegionalLists();
 
     }
@@ -71,53 +101,101 @@ public class BetterPixelmonSpawner {
     public void onServerStarting (FMLServerStartingEvent event) throws ObjectMappingException {
 
         event.registerServerCommand(new PixelmonSpawnerCommand());
-        logger.info("Registering Pokemon spawns...");
-        InfoRegistry.loadPokemonSpawnData();
-        logger.info("Registering Boss Pokemon spawns...");
-        if (Loader.isModLoaded("betterbosses")) {
-
-            if (!com.lypaka.betterbosses.Config.ConfigGetters.disableDefaultBosses) {
-
-                BossPokemonUtils.loadBossList();
-
-            }
-
-        } else {
-
-            BossPokemonUtils.loadBossList();
-
-        }
 
         // Loads holidays from config, not worth having config getters for it since it only loads on startup unless reload command is ran
         HolidayHandler.loadHolidays();
-
-        // Loads in the held item registry for all Pokemon that have held item data
-        HeldItemUtils.load();
 
     }
 
     @Mod.EventHandler
     public void onServerStarted (FMLServerStartedEvent event) throws ObjectMappingException {
 
+        // Doing this here so it can use the Utils mod's Pixelmon version detector
+        ConfigUpdater.updateConfig();
+        ConfigGetters.load();
+        PokemonConfig.setup(dir.resolve("pokemon"), PixelmonVersionDetector.VERSION);
+
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            // Loads in the held item registry for all Pokemon that have held item data
+            GenerationsHeldItemUtils.load();
+
+        } else {
+
+            ReforgedHeldItemUtils.load();
+
+        }
+
+        logger.info("Registering Pokemon spawns...");
+        InfoRegistry.loadPokemonSpawnData();
+        logger.info("Registering Boss Pokemon spawns...");
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            if (Loader.isModLoaded("betterbosses")) {
+
+                if (!com.lypaka.betterbosses.Config.ConfigGetters.disableDefaultBosses) {
+
+                    BossPokemonUtils.loadGenerationsBossList();
+
+                }
+
+            } else {
+
+                BossPokemonUtils.loadGenerationsBossList();
+
+            }
+
+        } else {
+
+            BossPokemonUtils.loadReforgedBossList();
+
+        }
+
+        if (Loader.isModLoaded("pixelboosters")) {
+
+            isPixelBoostersLoaded = true;
+            logger.info("Detected PixelBoosters, integrating...");
+
+        }
         server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        logger.info("Starting spawners...");
-        PokemonSpawner.startTimer();
-        LegendarySpawner.startTimer();
-        NPCSpawner.startTimer();
-        MiscSpawner.startTimer();
-
-        ClearTask.startClearTask();
-
-        MinecraftForge.EVENT_BUS.register(new BattleListener());
-        MinecraftForge.EVENT_BUS.register(new CaptureListener());
-        MinecraftForge.EVENT_BUS.register(new DefeatListener());
-        MinecraftForge.EVENT_BUS.register(new DespawnListener());
-        MinecraftForge.EVENT_BUS.register(new JoinListener());
-        MinecraftForge.EVENT_BUS.register(new PokemonSpawnListener());
-        MinecraftForge.EVENT_BUS.register(new ShinySpawnListener());
-        MinecraftForge.EVENT_BUS.register(new FishSpawner());
         MinecraftForge.EVENT_BUS.register(new RespawnListener());
         MinecraftForge.EVENT_BUS.register(new CommandListener());
+        MinecraftForge.EVENT_BUS.register(new JoinListener());
+        logger.info("Starting spawners...");
+        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+
+            GenerationsPokemonSpawner.startTimer();
+            GenerationsLegendarySpawner.startTimer();
+            GenerationsNPCSpawner.startTimer();
+            GenerationsMiscSpawner.startTimer();
+            MinecraftForge.EVENT_BUS.register(new GenerationsBattleListener());
+            MinecraftForge.EVENT_BUS.register(new GenerationsCaptureListener());
+            MinecraftForge.EVENT_BUS.register(new GenerationsDefeatListener());
+            MinecraftForge.EVENT_BUS.register(new DespawnListener());
+            MinecraftForge.EVENT_BUS.register(new GenerationsPokemonSpawnListener());
+            MinecraftForge.EVENT_BUS.register(new GenerationsShinySpawnListener());
+            MinecraftForge.EVENT_BUS.register(new GenerationsFishSpawner());
+
+        } else {
+
+            // Disables Reforged's fucked up natural spawners
+            SpawnerCoordinator.PROCESSOR.shutdown();
+            PixelmonSpawning.coordinator.deactivate();
+            PixelmonSpawning.coordinator = null;
+
+            ReforgedPokemonSpawner.startTimer();
+            ReforgedLegendarySpawner.startTimer();
+            ReforgedNPCSpawner.startTimer();
+            ReforgedMiscSpawner.startTimer();
+            Pixelmon.EVENT_BUS.register(new ReforgedBattleListener());
+            Pixelmon.EVENT_BUS.register(new ReforgedCaptureListener());
+            Pixelmon.EVENT_BUS.register(new ReforgedDefeatListener());
+            Pixelmon.EVENT_BUS.register(new ReforgedPokemonSpawnListener());
+            Pixelmon.EVENT_BUS.register(new ReforgedShinySpawnListener());
+
+        }
+
+        ClearTask.startClearTask();
 
         // Loads the areas
         DeadZoneRegistry.loadAreas();
@@ -127,12 +205,12 @@ public class BetterPixelmonSpawner {
     @Mod.EventHandler
     public void onShutDown (FMLServerStoppingEvent event) {
 
-        ConfigManager.getConfigNode(6, "Legendary-Opt-Out").setValue(ConfigGetters.legendaryOptOut);
-        ConfigManager.getConfigNode(6, "Misc-Opt-Out").setValue(ConfigGetters.miscOptOut);
-        ConfigManager.getConfigNode(6, "NPC-Opt-Out").setValue(ConfigGetters.npcOptOut);
-        ConfigManager.getConfigNode(6, "Pokemon-Opt-Out").setValue(ConfigGetters.pokemonOptOut);
-        ConfigManager.getConfigNode(6, "Spawner-Filter").setValue(ConfigGetters.locationMap);
-        ConfigManager.save();
+        configManager.getConfigNode(6, "Legendary-Opt-Out").setValue(ConfigGetters.legendaryOptOut);
+        configManager.getConfigNode(6, "Misc-Opt-Out").setValue(ConfigGetters.miscOptOut);
+        configManager.getConfigNode(6, "NPC-Opt-Out").setValue(ConfigGetters.npcOptOut);
+        configManager.getConfigNode(6, "Pokemon-Opt-Out").setValue(ConfigGetters.pokemonOptOut);
+        configManager.getConfigNode(6, "Spawner-Filter").setValue(ConfigGetters.locationMap);
+        configManager.save();
 
     }
 

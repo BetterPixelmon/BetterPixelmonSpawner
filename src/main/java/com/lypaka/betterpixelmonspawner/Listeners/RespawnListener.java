@@ -2,7 +2,7 @@ package com.lypaka.betterpixelmonspawner.Listeners;
 
 import com.lypaka.betterpixelmonspawner.Utils.Counters.MiscCounter;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.NPCCounter;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
+import com.lypaka.betterpixelmonspawner.Utils.Counters.GenerationsPokemonCounter;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -22,8 +22,8 @@ public class RespawnListener {
     private static void putTheBitchBackIfMissing (EntityPlayerMP player) {
 
         UUID uuid = player.getUniqueID();
-        JoinListener.playerMap.entrySet().removeIf(entry -> entry.getKey().toString().equalsIgnoreCase(uuid.toString()));
-        JoinListener.playerMap.put(uuid, player);
+        com.lypaka.lypakautils.JoinListener.playerMap.entrySet().removeIf(entry -> entry.getKey().toString().equalsIgnoreCase(uuid.toString()));
+        com.lypaka.lypakautils.JoinListener.playerMap.put(uuid, player);
         if (!MiscCounter.miscCountMap.containsKey(uuid)) {
 
             MiscCounter.miscCountMap.put(uuid, 0);
@@ -34,9 +34,9 @@ public class RespawnListener {
             NPCCounter.npcCountMap.put(uuid, 0);
 
         }
-        if (!PokemonCounter.pokemonCountMap.containsKey(uuid)) {
+        if (!GenerationsPokemonCounter.pokemonCountMap.containsKey(uuid)) {
 
-            PokemonCounter.pokemonCountMap.put(uuid, 0);
+            GenerationsPokemonCounter.pokemonCountMap.put(uuid, 0);
 
         }
 

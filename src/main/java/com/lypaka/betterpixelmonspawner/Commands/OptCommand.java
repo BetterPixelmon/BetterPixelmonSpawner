@@ -1,6 +1,6 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
-import com.lypaka.betterpixelmonspawner.Utils.FancyText;
+import com.lypaka.lypakautils.FancyText;
 import com.lypaka.betterpixelmonspawner.Utils.SpawnerUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -29,7 +29,7 @@ public class OptCommand extends CommandBase {
 
         if (args.length < 3) {
 
-            sender.sendMessage(FancyText.getFancyText("&e" + getUsage(sender)));
+            sender.sendMessage(FancyText.getFormattedText("&e" + getUsage(sender)));
             return;
 
         }
@@ -52,4 +52,5 @@ public class OptCommand extends CommandBase {
         }
 
     }
+
 }
