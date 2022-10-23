@@ -3,11 +3,9 @@ package com.lypaka.betterpixelmonspawner.DebugSystem;
 import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.GenerationsPokemonCounter;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.ReforgedPokemonCounter;
-import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
-import com.pixelmongenerations.core.event.RepelHandler;
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
+import com.pixelmonmod.pixelmon.listener.RepelHandler;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class PokemonDebug {
 
     public static List<UUID> trackedPlayers = new ArrayList<>();
 
-    public static void printPokemonDebugInformation (EntityPlayerMP player) {
+    public static void printPokemonDebugInformation (ServerPlayerEntity player) {
 
         if (!trackedPlayers.contains(player.getUniqueID())) return;
         boolean spawnHappens = true;
@@ -48,65 +46,26 @@ public class PokemonDebug {
             }
 
         }
-        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+        if (RepelHandler.hasRepel(player)) {
 
-            if (RepelHandler.hasRepel(player.getUniqueID())) {
+            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
+            if (spawnHappens) {
 
-                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
-                if (spawnHappens) {
-
-                    spawnHappens = false;
-
-                }
-
-            }
-
-        } else {
-
-            if (com.pixelmonmod.pixelmon.listener.RepelHandler.hasRepel(player)) {
-
-                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has Repel active!");
-                if (spawnHappens) {
-
-                    spawnHappens = false;
-
-                }
+                spawnHappens = false;
 
             }
 
         }
 
-        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+        BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + PokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
+        if (PokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
 
-            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + GenerationsPokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
-            if (GenerationsPokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
+            if (ConfigGetters.maxPokemon != 0) {
 
-                if (ConfigGetters.maxPokemon != 0) {
+                BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
+                if (spawnHappens) {
 
-                    BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
-                    if (spawnHappens) {
-
-                        spawnHappens = false;
-
-                    }
-
-                }
-
-            }
-
-        } else {
-
-            BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " currently has " + ReforgedPokemonCounter.getCount(player.getUniqueID()) + " Pokemon spawned for them!");
-            if (ReforgedPokemonCounter.getCount(player.getUniqueID()) >= ConfigGetters.maxPokemon) {
-
-                if (ConfigGetters.maxPokemon != 0) {
-
-                    BetterPixelmonSpawner.logger.info("DEBUG: " + player.getName() + " has reached the maximum amount of Pokemon they can have spawned on them!");
-                    if (spawnHappens) {
-
-                        spawnHappens = false;
-
-                    }
+                    spawnHappens = false;
 
                 }
 

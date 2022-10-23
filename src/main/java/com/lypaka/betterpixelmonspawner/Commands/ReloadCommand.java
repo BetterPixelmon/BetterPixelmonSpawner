@@ -1,220 +1,171 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
-import com.lypaka.betterpixelmonspawner.DeadZones.DeadZoneRegistry;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
+import com.lypaka.betterpixelmonspawner.DeadZones.DeadZoneRegistry;
 import com.lypaka.betterpixelmonspawner.Holidays.HolidayHandler;
-import com.lypaka.betterpixelmonspawner.Listeners.Generations.*;
 import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.InfoRegistry;
-import com.lypaka.betterpixelmonspawner.Spawners.Generations.*;
-import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedLegendarySpawner;
-import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedMiscSpawner;
-import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedNPCSpawner;
-import com.lypaka.betterpixelmonspawner.Spawners.Reforged.ReforgedPokemonSpawner;
-import com.lypaka.betterpixelmonspawner.Utils.Generations.GenerationsHeldItemUtils;
+import com.lypaka.betterpixelmonspawner.Spawners.LegendarySpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.MiscSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.NPCSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.PokemonSpawner;
+import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
-import com.lypaka.betterpixelmonspawner.Utils.Reforged.ReforgedHeldItemUtils;
 import com.lypaka.lypakautils.FancyText;
 import com.lypaka.lypakautils.PermissionHandler;
-import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
-import com.pixelmonmod.pixelmon.Pixelmon;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
-public class ReloadCommand extends CommandBase {
+import java.util.Arrays;
+import java.util.List;
 
-    @Override
-    public String getName() {
+public class ReloadCommand {
 
-        return "reload";
+    private static final List<String> OPTIONS = Arrays.asList("all", "pokemon", "holiday", "deadzones", "spawners", "helditems");
+    private static final SuggestionProvider<CommandSource> OPTION_SUGGESTIONS = (context, builder) ->
+            ISuggestionProvider.suggest(OPTIONS.stream(), builder);
 
-    }
+    public ReloadCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-    @Override
-    public String getUsage (ICommandSender sender) {
+        dispatcher.register(
+                Commands.literal("betterpixelmonspawner")
+                        .then(
+                                Commands.literal("reload")
+                                        .then(
+                                                Commands.argument("module", StringArgumentType.word())
+                                                        .suggests(OPTION_SUGGESTIONS)
+                                                        .executes(c -> {
 
-        return "/pspawner reload [module]";
+                                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-    }
+                                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                                if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.admin")) {
 
-    @Override
-    public void execute (MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                                                                    player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
+                                                                    return 0;
+
+                                                                }
+
+                                                            }
+                                                            try {
+
+                                                                String module = StringArgumentType.getString(c, "module");
+                                                                c.getSource().sendFeedback(FancyText.getFormattedText("&eStarting reloading of BPS, please wait..."), true);
+                                                                BetterPixelmonSpawner.configManager.load();
+                                                                ConfigGetters.load();
 
-        if (sender instanceof EntityPlayerMP) {
+                                                                switch (module) {
 
-            EntityPlayerMP player = (EntityPlayerMP) sender;
-            if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.admin")) {
+                                                                    case "pokemon":
+                                                                        BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
+                                                                        InfoRegistry.loadPokemonSpawnData();
+                                                                        BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
+                                                                        BossPokemonUtils.loadBossList();
+                                                                        break;
 
-                player.sendMessage(FancyText.getFormattedText("&cYou do not have permission to use this command!"));
-                return;
+                                                                    case "holiday":
+                                                                        HolidayHandler.loadHolidays();
+                                                                        break;
 
-            }
+                                                                    case "deadzones":
+                                                                        DeadZoneRegistry.loadAreas();
+                                                                        break;
 
-        }
+                                                                    case "spawners":
+                                                                        BetterPixelmonSpawner.logger.info("Starting spawners...");
+                                                                        PokemonSpawner.startTimer();
+                                                                        LegendarySpawner.startTimer();
+                                                                        NPCSpawner.startTimer();
+                                                                        MiscSpawner.startTimer();
+                                                                        ClearTask.startClearTask();
+                                                                        break;
 
-        String module = "all";
-        if (args.length == 2) {
+                                                                    case "helditems":
+                                                                        HeldItemUtils.load();
+                                                                        break;
 
-            module = args[1];
+                                                                    default:
+                                                                        BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
+                                                                        InfoRegistry.loadPokemonSpawnData();
+                                                                        BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
+                                                                        BossPokemonUtils.loadBossList();
+                                                                        HolidayHandler.loadHolidays();
+                                                                        DeadZoneRegistry.loadAreas();
+                                                                        BetterPixelmonSpawner.logger.info("Starting spawners...");
+                                                                        PokemonSpawner.startTimer();
+                                                                        LegendarySpawner.startTimer();
+                                                                        NPCSpawner.startTimer();
+                                                                        MiscSpawner.startTimer();
+                                                                        ClearTask.startClearTask();
+                                                                        HeldItemUtils.load();
+                                                                        break;
 
-        }
+                                                                }
 
-        try {
+                                                                c.getSource().sendFeedback(FancyText.getFormattedText("&aSuccessfully reloaded BetterPixelmonSpawner."), true);
 
-            sender.sendMessage(FancyText.getFormattedText("&eStarting reloading of BPS spawner, please wait..."));
-            BetterPixelmonSpawner.configManager.load();
-            ConfigGetters.load();
-            if (module.equalsIgnoreCase("pokemon")) {
+                                                            } catch (ObjectMappingException e) {
 
-                PokemonConfig.load(PixelmonVersionDetector.VERSION);
-                BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
-                InfoRegistry.loadPokemonSpawnData();
-                BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
+                                                                e.printStackTrace();
 
-                    if (Loader.isModLoaded("betterbosses")) {
+                                                            }
 
-                        if (!com.lypaka.betterbosses.Config.ConfigGetters.disableDefaultBosses) {
+                                                            return 1;
 
-                            BossPokemonUtils.loadGenerationsBossList();
+                                                        })
+                                        )
+                                        .executes(c -> {
 
-                        }
+                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                    } else {
+                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.admin")) {
 
-                        BossPokemonUtils.loadGenerationsBossList();
+                                                    player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
+                                                    return 0;
 
-                    }
+                                                }
 
-                } else {
+                                            }
 
-                    BossPokemonUtils.loadReforgedBossList();
+                                            try {
 
-                }
+                                                c.getSource().sendFeedback(FancyText.getFormattedText("&eStarting reloading of BPS, please wait..."), true);
+                                                BetterPixelmonSpawner.configManager.load();
+                                                ConfigGetters.load();
+                                                BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
+                                                InfoRegistry.loadPokemonSpawnData();
+                                                BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
+                                                BossPokemonUtils.loadBossList();
+                                                HolidayHandler.loadHolidays();
+                                                DeadZoneRegistry.loadAreas();
+                                                BetterPixelmonSpawner.logger.info("Starting spawners...");
+                                                PokemonSpawner.startTimer();
+                                                LegendarySpawner.startTimer();
+                                                NPCSpawner.startTimer();
+                                                MiscSpawner.startTimer();
+                                                ClearTask.startClearTask();
+                                                HeldItemUtils.load();
 
-            } else if (module.equalsIgnoreCase("holiday") || module.equalsIgnoreCase("holidays")) {
+                                            } catch (ObjectMappingException e) {
 
-                // Loads holidays from config, not worth having config getters for it since it only loads on startup unless reload command is ran
-                HolidayHandler.loadHolidays();
+                                                e.printStackTrace();
 
-            } else if (module.equalsIgnoreCase("deadzones") || module.equalsIgnoreCase("deadzone")) {
+                                            }
 
-                // Loads the dead zones
-                DeadZoneRegistry.loadAreas();
+                                            c.getSource().sendFeedback(FancyText.getFormattedText("&aSuccessfully reloaded BetterPixelmonSpawner."), true);
+                                            return 1;
 
-            } else if (module.equalsIgnoreCase("spawners") || module.equalsIgnoreCase("tasks")) {
-
-                BetterPixelmonSpawner.logger.info("Starting spawners...");
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-                    GenerationsPokemonSpawner.startTimer();
-                    GenerationsLegendarySpawner.startTimer();
-                    GenerationsNPCSpawner.startTimer();
-                    GenerationsMiscSpawner.startTimer();
-
-                } else {
-
-                    ReforgedPokemonSpawner.startTimer();
-                    ReforgedLegendarySpawner.startTimer();
-                    ReforgedNPCSpawner.startTimer();
-                    ReforgedMiscSpawner.startTimer();
-
-                }
-                ClearTask.startClearTask();
-
-            } else if (module.equalsIgnoreCase("helditems")) {
-
-                // Loads in the held item registry for all Pokemon that have held item data
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-                    GenerationsHeldItemUtils.load();
-
-                } else {
-
-                    ReforgedHeldItemUtils.load();
-
-                }
-
-            } else if (module.equalsIgnoreCase("all")) {
-
-                PokemonConfig.load(PixelmonVersionDetector.VERSION);
-                BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
-                InfoRegistry.loadPokemonSpawnData();
-                BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-                    if (Loader.isModLoaded("betterbosses")) {
-
-                        if (!com.lypaka.betterbosses.Config.ConfigGetters.disableDefaultBosses) {
-
-                            BossPokemonUtils.loadGenerationsBossList();
-
-                        }
-
-                    } else {
-
-                        BossPokemonUtils.loadGenerationsBossList();
-
-                    }
-
-                } else {
-
-                    BossPokemonUtils.loadReforgedBossList();
-
-                }
-
-                // Loads holidays from config, not worth having config getters for it since it only loads on startup unless reload command is ran
-                HolidayHandler.loadHolidays();
-
-                // Loads in the held item registry for all Pokemon that have held item data
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-                    GenerationsHeldItemUtils.load();
-
-                } else {
-
-                    ReforgedHeldItemUtils.load();
-
-                }
-
-                // Loads the dead zones
-                DeadZoneRegistry.loadAreas();
-
-                BetterPixelmonSpawner.logger.info("Starting spawners...");
-                if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-                    GenerationsPokemonSpawner.startTimer();
-                    GenerationsLegendarySpawner.startTimer();
-                    GenerationsNPCSpawner.startTimer();
-                    GenerationsMiscSpawner.startTimer();
-
-                } else {
-
-                    ReforgedPokemonSpawner.startTimer();
-                    ReforgedLegendarySpawner.startTimer();
-                    ReforgedNPCSpawner.startTimer();
-                    ReforgedMiscSpawner.startTimer();
-
-                }
-                ClearTask.startClearTask();
-
-            }
-
-        } catch (ObjectMappingException e) {
-
-            e.printStackTrace();
-
-        }
-
-        sender.sendMessage(FancyText.getFormattedText("&aSuccessfully reloaded BetterPixelmonSpawner."));
+                                        })
+                        )
+        );
 
     }
 

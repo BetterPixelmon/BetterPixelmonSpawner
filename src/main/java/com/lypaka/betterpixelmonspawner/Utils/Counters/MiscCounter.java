@@ -1,7 +1,7 @@
 package com.lypaka.betterpixelmonspawner.Utils.Counters;
 
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class MiscCounter {
 
     }
 
-    public static void increment (EntityLivingBase entity, UUID uuid) {
+    public static void increment (LivingEntity entity, UUID uuid) {
 
         if (ConfigGetters.maxMiscEntities <= 0) return;
         int count = getCount(uuid);

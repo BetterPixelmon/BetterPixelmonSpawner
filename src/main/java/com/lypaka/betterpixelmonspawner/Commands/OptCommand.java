@@ -1,55 +1,66 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
-import com.lypaka.lypakautils.FancyText;
 import com.lypaka.betterpixelmonspawner.Utils.SpawnerUtils;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
-public class OptCommand extends CommandBase {
+import java.util.Arrays;
+import java.util.List;
 
-    @Override
-    public String getName() {
+public class OptCommand {
 
-        return "opt";
+    private static final List<String> OPTIONS = Arrays.asList("in", "out");
+    private static final SuggestionProvider<CommandSource> OPTION_SUGGESTIONS = (context, builder) ->
+            ISuggestionProvider.suggest(OPTIONS.stream(), builder);
 
-    }
+    private static final List<String> MODULES = Arrays.asList("all", "pokemon", "npc", "misc", "legendary");
+    private static final SuggestionProvider<CommandSource> MODULE_SUGGESTIONS = (context, builder) ->
+            ISuggestionProvider.suggest(MODULES.stream(), builder);
 
-    @Override
-    public String getUsage (ICommandSender sender) {
+    public OptCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-        return "/pouts opt <in|out> <module>";
+        dispatcher.register(
+                Commands.literal("betterpixelmonspawner")
+                        .then(
+                                Commands.literal("opt")
+                                        .then(
+                                                Commands.argument("option", StringArgumentType.word())
+                                                        .suggests(OPTION_SUGGESTIONS)
+                                                        .then(
+                                                                Commands.argument("module", StringArgumentType.word())
+                                                                        .suggests(MODULE_SUGGESTIONS)
+                                                                        .executes(c -> {
 
-    }
+                                                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-    @Override
-    public void execute (MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                                                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                                                String option = StringArgumentType.getString(c, "option");
+                                                                                String module = StringArgumentType.getString(c, "module");
 
-        if (args.length < 3) {
+                                                                                if (option.equalsIgnoreCase("in")) {
 
-            sender.sendMessage(FancyText.getFormattedText("&e" + getUsage(sender)));
-            return;
+                                                                                    SpawnerUtils.remove(player, module);
 
-        }
+                                                                                } else {
 
-        if (sender instanceof EntityPlayerMP) {
+                                                                                    SpawnerUtils.add(player, module);
 
-            EntityPlayerMP player = (EntityPlayerMP) sender;
-            String opt = args[1];
-            String module = args[2];
-            if (opt.equalsIgnoreCase("in")) {
+                                                                                }
 
-                SpawnerUtils.remove(player, module);
+                                                                            }
 
-            } else if (opt.equalsIgnoreCase("out")) {
+                                                                            return 1;
 
-                SpawnerUtils.add(player, module);
-
-            }
-
-        }
+                                                                        })
+                                                        )
+                                        )
+                        )
+        );
 
     }
 

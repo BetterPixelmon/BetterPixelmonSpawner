@@ -1,7 +1,7 @@
 package com.lypaka.betterpixelmonspawner.Utils.Counters;
 
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.pixelmongenerations.common.entity.npcs.EntityNPC;
+import com.pixelmonmod.pixelmon.entities.npcs.NPCEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,17 +24,7 @@ public class NPCCounter {
 
     }
 
-    public static void increment (EntityNPC npc, UUID uuid) {
-
-        if (ConfigGetters.maxNPCs <= 0) return;
-        int count = getCount(uuid);
-        int updated = count + 1;
-        npcCountMap.put(uuid, updated);
-        npc.addTag("SpawnedPlayerUUID:" + uuid.toString());
-
-    }
-
-    public static void increment (com.pixelmonmod.pixelmon.entities.npcs.EntityNPC npc, UUID uuid) {
+    public static void increment (NPCEntity npc, UUID uuid) {
 
         if (ConfigGetters.maxNPCs <= 0) return;
         int count = getCount(uuid);

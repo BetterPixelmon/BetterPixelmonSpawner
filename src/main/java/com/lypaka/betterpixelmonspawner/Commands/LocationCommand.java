@@ -3,79 +3,73 @@ package com.lypaka.betterpixelmonspawner.Commands;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.lypakautils.FancyText;
 import com.lypaka.lypakautils.PermissionHandler;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class LocationCommand extends CommandBase {
+public class LocationCommand {
 
-    @Override
-    public String getName() {
+    private static final List<String> WORDS = Arrays.asList("clear", "air", "water", "land");
+    private static final SuggestionProvider<CommandSource> LOCATION_SUGGESTIONS = (context, builder) ->
+            ISuggestionProvider.suggest(WORDS.stream(), builder);
 
-        return "location";
+    public LocationCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-    }
+        dispatcher.register(
+                Commands.literal("betterpixelmonspawner")
+                        .then(
+                                Commands.literal("location")
+                                        .then(
+                                                Commands.argument("location", StringArgumentType.word())
+                                                        .suggests(LOCATION_SUGGESTIONS)
+                                                        .executes(c -> {
 
-    @Override
-    public List<String> getAliases() {
-        
-        List<String> a = new ArrayList<>();
-        a.add("loc");
-        return a;
-        
-    }
+                                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-    @Override
-    public String getUsage (ICommandSender sender) {
+                                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                                if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.location")) {
 
-        return "/bps loc <location>";
+                                                                    player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
+                                                                    return 0;
 
-    }
+                                                                }
 
-    @Override
-    public void execute (MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                                                                String loc = StringArgumentType.getString(c, "location");
+                                                                if (!WORDS.contains(loc)) {
 
-        if (sender instanceof EntityPlayerMP) {
+                                                                    player.sendMessage(FancyText.getFormattedText("&cInvalid argument!"), player.getUniqueID());
+                                                                    return 0;
 
-            EntityPlayerMP player = (EntityPlayerMP) sender;
-            if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.location")) {
+                                                                }
 
-                player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"));
-                return;
+                                                                if (loc.equalsIgnoreCase("air") || loc.equalsIgnoreCase("water") || loc.equalsIgnoreCase("land") || loc.equalsIgnoreCase("underground")) {
 
-            }
+                                                                    ConfigGetters.locationMap.put(player.getUniqueID().toString(), loc);
+                                                                    player.sendMessage(FancyText.getFormattedText("&aSuccessfully set your spawner location to: &e" + loc + " &a."), player.getUniqueID());
+                                                                    player.sendMessage(FancyText.getFormattedText("&eTo remove the filtering, type &b\"/bps loc clear\"&e."), player.getUniqueID());
 
-            if (args.length < 2) {
+                                                                } else if (loc.equalsIgnoreCase("clear")) {
 
-                player.sendMessage(FancyText.getFormattedText(getUsage(player)));
-                return;
+                                                                    ConfigGetters.locationMap.entrySet().removeIf(entry -> entry.toString().equalsIgnoreCase(player.getUniqueID().toString()));
+                                                                    player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed your spawner location filter!"), player.getUniqueID());
 
-            }
-            
-            String location = args[1];
-            if (location.equalsIgnoreCase("air") || location.equalsIgnoreCase("water") || location.equalsIgnoreCase("land") || location.equalsIgnoreCase("underground")) {
+                                                                }
 
-                ConfigGetters.locationMap.put(player.getUniqueID().toString(), location);
-                player.sendMessage(FancyText.getFormattedText("&aSuccessfully set your spawner location to: &e" + location + " &a."));
-                player.sendMessage(FancyText.getFormattedText("&eTo remove the filtering, type &b\"/bps loc clear\"&e."));
-                
-            } else if (location.equalsIgnoreCase("clear")) {
-                
-                ConfigGetters.locationMap.entrySet().removeIf(entry -> entry.toString().equalsIgnoreCase(player.getUniqueID().toString()));
-                player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed your spawner location filter!"));
-                
-            } else {
-                
-                player.sendMessage(FancyText.getFormattedText("&eInvalid arguments! Use &c\"clear\"&e, &c\"air\"&e, &c\"land\"&e, &c\"water\"&e or &c\"underground\"&e."));
-                
-            }
+                                                            }
 
-        }
+                                                            return 1;
+
+                                                        })
+                                        )
+                        )
+        );
 
     }
 

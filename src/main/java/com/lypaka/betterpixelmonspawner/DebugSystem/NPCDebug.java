@@ -3,7 +3,7 @@ package com.lypaka.betterpixelmonspawner.DebugSystem;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.NPCCounter;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class NPCDebug {
 
     public static List<UUID> trackedPlayers = new ArrayList<>();
 
-    public static void printPlayerDebugInformation (EntityPlayerMP player) {
+    public static void printPlayerDebugInformation (ServerPlayerEntity player) {
 
         if (!trackedPlayers.contains(player.getUniqueID())) return;
         if (ConfigGetters.npcOptOut.contains(player.getUniqueID().toString())) {
@@ -40,7 +40,7 @@ public class NPCDebug {
             BetterPixelmonSpawner.logger.info("NPC DEBUG: Player " + player.getName() + " is in spectator mode and the NPC spawner is set to ignore them!");
 
         }
-        String worldName = player.world.getWorldInfo().getWorldName();
+        String worldName = player.getServerWorld().getWorld().toString().replace("ServerLevel[", "").replace("]", "");
         if (ConfigGetters.worldBlacklist.contains(worldName)) {
 
             BetterPixelmonSpawner.logger.info("NPC DEBUG: Player " + player.getName() + "'s world is blacklisted from spawning!");

@@ -2,13 +2,12 @@ package com.lypaka.betterpixelmonspawner.Utils.PokemonUtils;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
-import com.pixelmongenerations.common.entity.npcs.registry.DropItemRegistry;
-import com.pixelmongenerations.common.entity.pixelmon.drops.BossInfo;
-import com.pixelmongenerations.core.enums.EnumBossMode;
-import com.pixelmongenerations.core.enums.EnumSpecies;
-import com.pixelmongenerations.core.util.helper.RandomHelper;
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.pixelmonmod.pixelmon.api.pokemon.boss.BossTier;
+import com.pixelmonmod.pixelmon.api.pokemon.boss.BossTierRegistry;
+import com.pixelmonmod.pixelmon.api.pokemon.species.Species;
+import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
+import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.*;
 
@@ -17,84 +16,34 @@ public class BossPokemonUtils {
     private static List<String> possibleBosses = new ArrayList<>();
     public static Map<UUID, Integer> amountMap = new HashMap<>();
 
-    public static void loadGenerationsBossList() {
+    public static void loadBossList() {
 
         possibleBosses = new ArrayList<>();
-        for (EnumSpecies species : EnumSpecies.values()) {
+        for (Species species : PixelmonSpecies.getAll()) {
 
-            if (EnumSpecies.legendaries.contains(species.getPokemonName()) || EnumSpecies.ultrabeasts.contains(species.getPokemonName())) {
+            if (PixelmonSpecies.getLegendaries(false).contains(species.getDex())) {
 
-                possibleBosses.add(species.getPokemonName());
-
-            } else {
-
-                List<String> defaultBosses = new ArrayList<>();
-                ArrayList<BossInfo> bosses = DropItemRegistry.getBossPokemon();
-                for (BossInfo b : bosses) {
-
-                    if (b.pokemon == species) {
-
-                        if (!defaultBosses.contains(species.getPokemonName())) {
-
-                            defaultBosses.add(species.getPokemonName());
-
-                        }
-                        if (!possibleBosses.contains(species.getPokemonName())) {
-
-                            possibleBosses.add(species.getPokemonName());
-
-                        }
-
-                    }
-
-                }
-
-                if (ConfigGetters.bossesCanBeNormal) {
-
-                    if (!defaultBosses.contains(species.getPokemonName())) {
-
-                        if (possibleBosses.contains(species.getPokemonName())) {
-
-                            possibleBosses.add(species.getPokemonName());
-
-                        }
-
-                    }
-
-                }
+                possibleBosses.add(species.getName());
 
             }
+            if (PixelmonSpecies.getUltraBeasts().contains(species.getDex())) {
 
-        }
+                possibleBosses.add(species.getName());
 
-    }
+            }
+            if (species.getDefaultForm().hasMegaForm()) {
 
-    public static void loadReforgedBossList() {
+                if (!possibleBosses.contains(species.getName())) {
 
-        possibleBosses = new ArrayList<>();
-        for (com.pixelmonmod.pixelmon.enums.EnumSpecies species : com.pixelmonmod.pixelmon.enums.EnumSpecies.values()) {
+                    possibleBosses.add(species.getName());
 
-            if (com.pixelmonmod.pixelmon.enums.EnumSpecies.legendaries.contains(species) || com.pixelmonmod.pixelmon.enums.EnumSpecies.ultrabeasts.contains(species)) {
+                }
 
-                possibleBosses.add(species.getPokemonName());
+            } else if (ConfigGetters.bossesCanBeNormal) {
 
-            } else {
+                if (!possibleBosses.contains(species.getName())) {
 
-                if (species.hasMega()) {
-
-                    if (!possibleBosses.contains(species.getPokemonName())) {
-
-                        possibleBosses.add(species.getPokemonName());
-
-                    }
-
-                } else if (ConfigGetters.bossesCanBeNormal) {
-
-                    if (!possibleBosses.contains(species.getPokemonName())) {
-
-                        possibleBosses.add(species.getPokemonName());
-
-                    }
+                    possibleBosses.add(species.getName());
 
                 }
 
@@ -107,15 +56,7 @@ public class BossPokemonUtils {
     public static boolean spawnBoss() {
 
         if (ConfigGetters.bossSpawnChance == 0) return false;
-        if (PixelmonVersionDetector.VERSION.equalsIgnoreCase("Generations")) {
-
-            return RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
-
-        } else {
-
-            return com.pixelmonmod.pixelmon.RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
-
-        }
+        return RandomHelper.getRandomChance(ConfigGetters.bossSpawnChance);
 
     }
 
@@ -125,16 +66,16 @@ public class BossPokemonUtils {
 
     }
 
-    public static EnumBossMode getBossMode() {
+    public static BossTier getBossMode() {
 
-        EnumBossMode mode = EnumBossMode.Uncommon;
+        BossTier mode = BossTierRegistry.getBossTierUnsafe("uncommon");
         double sum = ConfigGetters.bossSpawnMap.values().stream().mapToDouble(c -> c).sum();
         double rng = BetterPixelmonSpawner.random.nextDouble() * sum;
         for (Map.Entry<String, Double> entry : ConfigGetters.bossSpawnMap.entrySet()) {
 
             if (Double.compare(entry.getValue(), rng) <= 0) {
 
-                mode = EnumBossMode.valueOf(entry.getKey());
+                mode = BossTierRegistry.getBossTierUnsafe(entry.getKey());
                 break;
 
             } else {
@@ -149,31 +90,7 @@ public class BossPokemonUtils {
 
     }
 
-    public static com.pixelmonmod.pixelmon.enums.EnumBossMode getReforgedBossMode() {
-
-        com.pixelmonmod.pixelmon.enums.EnumBossMode mode = com.pixelmonmod.pixelmon.enums.EnumBossMode.Uncommon;
-        double sum = ConfigGetters.bossSpawnMap.values().stream().mapToDouble(c -> c).sum();
-        double rng = BetterPixelmonSpawner.random.nextDouble() * sum;
-        for (Map.Entry<String, Double> entry : ConfigGetters.bossSpawnMap.entrySet()) {
-
-            if (Double.compare(entry.getValue(), rng) <= 0) {
-
-                mode = com.pixelmonmod.pixelmon.enums.EnumBossMode.valueOf(entry.getKey());
-                break;
-
-            } else {
-
-                rng -= entry.getValue();
-
-            }
-
-        }
-
-        return mode;
-
-    }
-
-    public static boolean canSpawn (EntityPlayerMP player) {
+    public static boolean canSpawn (ServerPlayerEntity player) {
 
         if (!amountMap.containsKey(player.getUniqueID())) return true;
         int amount = amountMap.get(player.getUniqueID());

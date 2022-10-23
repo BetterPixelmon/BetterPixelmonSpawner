@@ -2,7 +2,7 @@ package com.lypaka.betterpixelmonspawner.DeadZones;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.lypakautils.WorldDimGetter;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -85,7 +85,7 @@ public class DeadZone {
 
     }
 
-    public static boolean isInArea (EntityPlayerMP player) {
+    public static boolean isInArea (ServerPlayerEntity player) {
 
         if (BetterPixelmonSpawner.deadZones.size() == 0) return false;
         try {
@@ -93,7 +93,7 @@ public class DeadZone {
             int x = player.getPosition().getX();
             int y = player.getPosition().getY();
             int z = player.getPosition().getZ();
-            int playerDim = WorldDimGetter.getDimID(player.world, player);
+            int playerDim = WorldDimGetter.getDimID(player.world);
 
             if (playerDim == -99999) return false;
 
@@ -102,7 +102,7 @@ public class DeadZone {
                 if (x >= deadZone.getMinX() && x <= deadZone.getMaxX() &&
                         y >= deadZone.getMinY() && y <= deadZone.getMaxY() &&
                         z >= deadZone.getMinZ() && z <= deadZone.getMaxZ() &&
-                        WorldDimGetter.getDimID(deadZone.getWorld(), player) == playerDim) {
+                        WorldDimGetter.getDimID(deadZone.getWorld()) == playerDim) {
 
                     return true;
 
@@ -112,7 +112,7 @@ public class DeadZone {
 
         } catch (IndexOutOfBoundsException er) {
 
-            if (!player.world.getMinecraftServer().isDedicatedServer()) {
+            if (!player.world.getServer().isDedicatedServer()) {
 
                 return false;
 
@@ -130,7 +130,7 @@ public class DeadZone {
 
     }
 
-    public static DeadZone getAreaFromLocation (EntityPlayerMP player) {
+    public static DeadZone getAreaFromLocation (ServerPlayerEntity player) {
 
         if (BetterPixelmonSpawner.deadZones.size() == 0) return null;
         DeadZone deadZone = null;
@@ -139,7 +139,7 @@ public class DeadZone {
             int x = player.getPosition().getX();
             int y = player.getPosition().getY();
             int z = player.getPosition().getZ();
-            int playerDim = WorldDimGetter.getDimID(player.world, player);
+            int playerDim = WorldDimGetter.getDimID(player.world);
 
             if (playerDim == -99999) return null;
 
@@ -148,7 +148,7 @@ public class DeadZone {
                 if (x >= a.getMinX() && x <= a.getMaxX() &&
                         y >= a.getMinY() && y <= a.getMaxY() &&
                         z >= a.getMinZ() && z <= a.getMaxZ() &&
-                        WorldDimGetter.getDimID(a.getWorld(), player) == playerDim) {
+                        WorldDimGetter.getDimID(a.getWorld()) == playerDim) {
 
                     deadZone = a;
                     break;
@@ -159,7 +159,7 @@ public class DeadZone {
 
         } catch (IndexOutOfBoundsException er) {
 
-            if (player.world.getMinecraftServer().isDedicatedServer()) {
+            if (player.world.getServer().isDedicatedServer()) {
 
                 BetterPixelmonSpawner.logger.error("Detected an error getting an Area from a location!");
 

@@ -2,13 +2,13 @@ package com.lypaka.betterpixelmonspawner.Utils;
 
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.lypakautils.FancyText;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.List;
 
 public class SpawnerUtils {
 
-    public static void add (EntityPlayerMP player, String module) {
+    public static void add (ServerPlayerEntity player, String module) {
 
         if (module.equalsIgnoreCase("all")) {
 
@@ -20,7 +20,7 @@ public class SpawnerUtils {
             npcList.add(player.getUniqueID().toString());
             legendaryList.add(player.getUniqueID().toString());
             miscList.add(player.getUniqueID().toString());
-            player.sendMessage(FancyText.getFormattedText("&aSuccessfully added you to every exempt list!"));
+            player.sendMessage(FancyText.getFormattedText("&aSuccessfully added you to every exempt list!"), player.getUniqueID());
 
         } else {
 
@@ -52,13 +52,13 @@ public class SpawnerUtils {
             if (!list.contains(player.getUniqueID().toString())) {
 
                 list.add(player.getUniqueID().toString());
-                player.sendMessage(FancyText.getFormattedText("&aSuccessfully added you to the " + module + " exempt list!"));
-                player.sendMessage(FancyText.getFormattedText("&eTo re-enable spawns for the " + module + " spawner, run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."));
+                player.sendMessage(FancyText.getFormattedText("&aSuccessfully added you to the " + module + " exempt list!"), player.getUniqueID());
+                player.sendMessage(FancyText.getFormattedText("&eTo re-enable spawns for the " + module + " spawner, run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."), player.getUniqueID());
 
             } else {
 
-                player.sendMessage(FancyText.getFormattedText("&cYou are already on the exempt list for the " + module + " spawner!"));
-                player.sendMessage(FancyText.getFormattedText("&eDid you mean to re-enable the spawns? Run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."));
+                player.sendMessage(FancyText.getFormattedText("&cYou are already on the exempt list for the " + module + " spawner!"), player.getUniqueID());
+                player.sendMessage(FancyText.getFormattedText("&eDid you mean to re-enable the spawns? Run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."), player.getUniqueID());
 
             }
 
@@ -66,7 +66,7 @@ public class SpawnerUtils {
 
     }
 
-    public static void remove (EntityPlayerMP player, String module) {
+    public static void remove (ServerPlayerEntity player, String module) {
 
         if (module.equalsIgnoreCase("all")) {
 
@@ -78,7 +78,7 @@ public class SpawnerUtils {
             npcList.removeIf(entry -> entry.equalsIgnoreCase(player.getUniqueID().toString()));
             legendaryList.removeIf(entry -> entry.equalsIgnoreCase(player.getUniqueID().toString()));
             miscList.removeIf(entry -> entry.equalsIgnoreCase(player.getUniqueID().toString()));
-            player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed you from every exempt list!"));
+            player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed you from every exempt list!"), player.getUniqueID());
 
         }
 
@@ -109,14 +109,14 @@ public class SpawnerUtils {
 
         if (!list.contains(player.getUniqueID().toString())) {
 
-            player.sendMessage(FancyText.getFormattedText("&cYou are not already on the exempt list for the " + module + " spawner!"));
-            player.sendMessage(FancyText.getFormattedText("&eDid you mean to re-enable the spawns? Run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."));
+            player.sendMessage(FancyText.getFormattedText("&cYou are not already on the exempt list for the " + module + " spawner!"), player.getUniqueID());
+            player.sendMessage(FancyText.getFormattedText("&eDid you mean to re-enable the spawns? Run &c\"/bpspawner opt in " + module.toLowerCase() + "\"&e."), player.getUniqueID());
 
         } else {
 
             list.removeIf(entry -> player.getUniqueID().toString().equalsIgnoreCase(entry.toString()));
-            player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed you from the exempt list for the " + module + " spawner!"));
-            player.sendMessage(FancyText.getFormattedText("&eDid you mean to disable the spawns? Run &c\"/bpspawner opt out " + module.toLowerCase() + "\"&e."));
+            player.sendMessage(FancyText.getFormattedText("&aSuccessfully removed you from the exempt list for the " + module + " spawner!"), player.getUniqueID());
+            player.sendMessage(FancyText.getFormattedText("&eDid you mean to disable the spawns? Run &c\"/bpspawner opt out " + module.toLowerCase() + "\"&e."), player.getUniqueID());
 
         }
 

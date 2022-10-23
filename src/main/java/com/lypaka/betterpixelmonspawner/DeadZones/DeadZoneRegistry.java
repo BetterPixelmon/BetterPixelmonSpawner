@@ -3,7 +3,7 @@ package com.lypaka.betterpixelmonspawner.DeadZones;
 import com.google.common.reflect.TypeToken;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.lypakautils.WorldMap;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class DeadZoneRegistry {
             int minY = Integer.parseInt(actualArea.get("Min-Y"));
             int minZ = Integer.parseInt(actualArea.get("Min-Z"));
             String worldName = actualArea.get("World");
-            World w = null;
-            for (Map.Entry<String, World> wEntry : WorldMap.worldMap.entrySet()) {
+            ServerWorld w = null;
+            for (Map.Entry<String, ServerWorld> wEntry : WorldMap.worldMap.entrySet()) {
 
                 if (wEntry.getKey().equalsIgnoreCase(worldName)) {
 

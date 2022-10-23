@@ -3,13 +3,11 @@ package com.lypaka.betterpixelmonspawner.PokeClear;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.Listeners.JoinListener;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.GenerationsPokemonCounter;
-import com.lypaka.betterpixelmonspawner.Utils.Counters.ReforgedPokemonCounter;
+import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.PixelmonHandlers.PixelmonVersionDetector;
-import com.pixelmongenerations.common.entity.pixelmon.EntityPixelmon;
-import com.pixelmongenerations.core.enums.EnumSpecies;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
+import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.*;
 
@@ -38,7 +36,6 @@ public class ClearTask {
 
         warningTimer = new Timer();
         clearTimer = new Timer();
-        String version = PixelmonVersionDetector.VERSION;
         long msgInterval = ConfigGetters.clearWarningInterval * 1000L;
         long clearInterval = ConfigGetters.pokeClearInterval * 1000L;
         long interval = clearInterval - msgInterval;
@@ -48,25 +45,17 @@ public class ClearTask {
             @Override
             public void run() {
 
-                BetterPixelmonSpawner.server.getPlayerList().sendMessage(FancyText.getFormattedText(ConfigGetters.clearWarningMessage));
+                BetterPixelmonSpawner.server.getPlayerList().getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(ConfigGetters.clearWarningMessage), p.getUniqueID()));
                 clearTimer.schedule(new TimerTask() {
 
                     @Override
                     public void run() {
 
-                        FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
+                        ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                             JoinListener.pokemonMap.entrySet().removeIf(entry -> {
 
-                                if (version.equalsIgnoreCase("Generations")) {
-
-                                    GenerationsPokemonCounter.checkForDespawnPokemon(entry.getKey());
-
-                                } else {
-
-                                    ReforgedPokemonCounter.checkForDespawnPokemon(entry.getKey());
-
-                                }
+                                PokemonCounter.checkForDespawnPokemon(entry.getKey());
                                 if (!com.lypaka.lypakautils.JoinListener.playerMap.containsKey(entry.getKey())) {
 
                                     return true;
@@ -84,9 +73,8 @@ public class ClearTask {
 
                             }
 
-                            BetterPixelmonSpawner.server.getPlayerList().sendMessage(FancyText.getFormattedText(msg
-                                    .replace("%number%", String.valueOf(count))
-                            ));
+                            String finalMsg = msg;
+                            BetterPixelmonSpawner.server.getPlayerList().getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(count))), p.getUniqueID()));
 
                             count = 0;
 
@@ -102,7 +90,7 @@ public class ClearTask {
 
     }
 
-    public static boolean isBlacklisted (EntityPixelmon pokemon) {
+    public static boolean isBlacklisted (PixelmonEntity pokemon) {
 
         boolean blacklisted = false;
         if (pokemon.hasOwner()) {
@@ -117,23 +105,15 @@ public class ClearTask {
         }
         for (String entry : ConfigGetters.blacklistedClearPokemon) {
 
-            if (entry.equalsIgnoreCase("legendaries") && EnumSpecies.legendaries.contains(pokemon.getPokemonName()) ||
-                entry.equalsIgnoreCase("legendaries") && EnumSpecies.ultrabeasts.contains(pokemon.getPokemonName()) ||
+            if (entry.equalsIgnoreCase("legendaries") && PixelmonSpecies.getLegendaries(false).contains(pokemon.getSpecies().getDex()) ||
+                entry.equalsIgnoreCase("legendaries") && PixelmonSpecies.getUltraBeasts().contains(pokemon.getSpecies().getDex()) ||
                 entry.equalsIgnoreCase("legendaries") && pokemon.getTags().contains("SpecialLegendarySpawn")) {
 
                 blacklisted = true;
 
-            } else if (entry.equalsIgnoreCase("alphas") && pokemon.isAlpha()) {
-
-                blacklisted = true;
-
-            } else if (entry.equalsIgnoreCase("totems") && pokemon.isTotem()) {
-
-                blacklisted = true;
-
             } else if (entry.equalsIgnoreCase("bosses")) {
 
-                if (pokemon.isMega) {
+                if (pokemon.getPokemon().isMega() || pokemon.isBossPokemon()) {
 
                     blacklisted = true;
 
@@ -152,77 +132,10 @@ public class ClearTask {
 
                 }
 
-            } else if (entry.equalsIgnoreCase("shinies") && pokemon.isShiny()) {
+            } else if (entry.equalsIgnoreCase("shinies") && pokemon.getPokemon().isShiny()) {
 
                 blacklisted = true;
 
-
-            } else if (entry.equalsIgnoreCase("textures") && !pokemon.getCustomTexture().equalsIgnoreCase("")) {
-
-                blacklisted = true;
-
-            } else if (entry.equalsIgnoreCase("outbreakpokemon") && pokemon.getTags().contains("OutbreakPokemon")) {
-
-                blacklisted = true;
-
-            }
-
-        }
-
-        return blacklisted;
-
-    }
-
-    public static boolean isBlacklisted (com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon pokemon) {
-
-        boolean blacklisted = false;
-        if (pokemon.hasOwner()) {
-
-            return true;
-
-        }
-        if (pokemon.battleController != null) {
-
-            return true;
-
-        }
-        for (String entry : ConfigGetters.blacklistedClearPokemon) {
-
-            if (entry.equalsIgnoreCase("legendaries") && com.pixelmonmod.pixelmon.enums.EnumSpecies.legendaries.contains(pokemon.getSpecies()) ||
-                    entry.equalsIgnoreCase("legendaries") && com.pixelmonmod.pixelmon.enums.EnumSpecies.ultrabeasts.contains(pokemon.getSpecies()) ||
-                    entry.equalsIgnoreCase("legendaries") && pokemon.getTags().contains("SpecialLegendarySpawn")) {
-
-                blacklisted = true;
-
-            } else if (entry.equalsIgnoreCase("bosses")) {
-
-                if (pokemon.isBossPokemon()) {
-
-                    blacklisted = true;
-
-                } else {
-
-                    for (String tag : pokemon.getTags()) {
-
-                        if (tag.equalsIgnoreCase("PixelmonDefaultBoss") || tag.contains("BossPokemon:Tier-")) {
-
-                            blacklisted = true;
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-            } else if (entry.equalsIgnoreCase("shinies") && pokemon.getPokemonData().isShiny()) {
-
-                blacklisted = true;
-
-
-            } else if (entry.equalsIgnoreCase("textures") && !pokemon.getPokemonData().getCustomTexture().equalsIgnoreCase("")) {
-
-                blacklisted = true;
 
             }
 

@@ -7,17 +7,11 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
 
-/**
- * Loads and stores all the configuration settings.
- * It loads from file on server start up. or when a player reloads the plugin.
- *
- * @author BurstingFire
- * @since 04/11/2022 - Version 1.0.0
- */
 public class PokemonConfig {
 
     private static Path dir;
@@ -25,11 +19,11 @@ public class PokemonConfig {
     private static final Map<String, CommentedConfigurationNode> configNodes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     public static List<String> fileNames;
 
-    public static void setup (Path folder, String version) {
+    public static void setup (Path folder) {
 
         dir = checkDir(folder);
         fileNames = new ArrayList<>();
-        load(version);
+        load();
 
     }
 
@@ -47,13 +41,13 @@ public class PokemonConfig {
 
     }
 
-    public static void load (String version) {
+    public static void load() {
 
         try {
 
             if (dir.toFile().listFiles().length == 0) {
 
-                String location = "assets/betterpixelmonspawner/pokemon/" + version.toLowerCase();
+                String location = "assets/betterpixelmonspawner/pokemon";
 
                 // directory is empty, load defaults from assets
                 FileSystem fileSystem = FileSystems.newFileSystem(BetterPixelmonSpawner.class.getClassLoader().getResource(location).toURI(), new HashMap<>());
