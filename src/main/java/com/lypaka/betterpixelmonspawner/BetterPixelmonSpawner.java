@@ -50,7 +50,6 @@ public class BetterPixelmonSpawner {
         loadRegionalLists();
         ConfigGetters.load();
         PokemonConfig.init(dir);
-        //String[] pokemonFiles = (String[]) ConfigGetters.pokemonFiles.toArray();
         ConfigUpdater.updateConfig();
 
     }
