@@ -44,12 +44,13 @@ public class BetterPixelmonSpawner {
         dir = ConfigUtils.checkDir(Paths.get("./config/betterpixelmonspawner"));
         String[] files = new String[]{"generalSettings.conf", "holidays.conf", "pokemonSpawner.conf",
                 "legendarySpawner.conf", "npcSpawner.conf", "miscSpawner.conf", "storage.conf", "deadZones.conf",
-                "last-spawn-list.conf", "heldItems.conf"};
+                "last-spawn-list.conf", "heldItems.conf", "pokemonFiles.conf"};
         configManager = new BasicConfigManager(files, dir, BetterPixelmonSpawner.class, MOD_NAME, MOD_ID, logger);
         configManager.init();
         loadRegionalLists();
         ConfigGetters.load();
-        PokemonConfig.setup(dir.resolve("pokemon"));
+        PokemonConfig.init(dir);
+        //String[] pokemonFiles = (String[]) ConfigGetters.pokemonFiles.toArray();
         ConfigUpdater.updateConfig();
 
     }

@@ -527,9 +527,10 @@ public class PokemonSpawner {
                                     if (pokemon == null) return;
 
                                 }
-                                pokemon = PokemonUtils.validateReforgedPokemon(pokemon, level);
+                                pokemon = PokemonUtils.validatePokemon(pokemon, level);
                                 pokemon.setLocationAndAngles(x + RandomHelper.getRandomNumberBetween(2.75f, 6f), y, z + RandomHelper.getRandomNumberBetween(2.75f, 6f),0, 0);
                                 pokemon.updateStats();
+                                pokemon.getPokemon().setLevelNum(level);
                                 pokemon.setSpawnLocation(pokemon.getDefaultSpawnLocation());
                                 if (ConfigGetters.aggressiveChance > 0) {
 
@@ -585,9 +586,12 @@ public class PokemonSpawner {
                                             MinecraftForge.EVENT_BUS.post(holidaySpawnEvent);
                                             if (!holidaySpawnEvent.isCanceled()) {
 
+                                                int finalLevel = level;
                                                 ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                                                     holidaySpawnEvent.getPlayer().world.addEntity(holidaySpawnEvent.getPokemon());
+                                                    holidaySpawnEvent.getPokemon().getPokemon().setLevel(finalLevel);
+                                                    holidaySpawnEvent.getPokemon().getPokemon().setLevelNum(finalLevel);
                                                     PokemonCounter.increment(holidaySpawnEvent.getPokemon(), player.getUniqueID());
                                                     PokemonCounter.addPokemon(holidaySpawnEvent.getPokemon(), player.getUniqueID());
 
@@ -628,9 +632,12 @@ public class PokemonSpawner {
 
                                                             pokemon.setBossTier(BossPokemonUtils.getBossMode());
                                                             pokeModified = true;
+                                                            int finalLevel = level;
                                                             ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                                                                 player.world.addEntity(bossSpawnEvent.getPokemon());
+                                                                bossSpawnEvent.getPokemon().getPokemon().setLevel(finalLevel);
+                                                                bossSpawnEvent.getPokemon().getPokemon().setLevelNum(finalLevel);
                                                                 PokemonCounter.increment(bossSpawnEvent.getPokemon(), player.getUniqueID());
                                                                 // Sets this tag for the PokeClear to be able to know what a Boss is, in the event of a "normal" Boss
                                                                 bossSpawnEvent.getPokemon().addTag("PixelmonDefaultBoss");
@@ -658,11 +665,14 @@ public class PokemonSpawner {
                                     MinecraftForge.EVENT_BUS.post(shinySpawnEvent);
                                     if (!shinySpawnEvent.isCanceled()) {
 
+                                        int finalLevel = level;
                                         ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                                             shinySpawnEvent.getPokemon().getPokemon().setGigantamaxFactor(finalGmax);
                                             shinySpawnEvent.getPokemon().getPokemon().setShiny(true);
                                             player.world.addEntity(shinySpawnEvent.getPokemon());
+                                            shinySpawnEvent.getPokemon().getPokemon().setLevel(finalLevel);
+                                            shinySpawnEvent.getPokemon().getPokemon().setLevelNum(finalLevel);
                                             PokemonCounter.increment(shinySpawnEvent.getPokemon(), player.getUniqueID());
                                             PokemonCounter.addPokemon(shinySpawnEvent.getPokemon(), player.getUniqueID());
 
@@ -676,10 +686,13 @@ public class PokemonSpawner {
                                     MinecraftForge.EVENT_BUS.post(pokemonSpawnEvent);
                                     if (!pokemonSpawnEvent.isCanceled()) {
 
+                                        int finalLevel = level;
                                         ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                                             pokemonSpawnEvent.getPokemon().getPokemon().setGigantamaxFactor(finalGmax);
                                             player.world.addEntity(pokemonSpawnEvent.getPokemon());
+                                            pokemonSpawnEvent.getPokemon().getPokemon().setLevel(finalLevel);
+                                            pokemonSpawnEvent.getPokemon().getPokemon().setLevelNum(finalLevel);
                                             PokemonCounter.increment(pokemonSpawnEvent.getPokemon(), player.getUniqueID());
                                             PokemonCounter.addPokemon(pokemonSpawnEvent.getPokemon(), player.getUniqueID());
 

@@ -116,3 +116,10 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+.gradle/buildOutputCleanup/cache.properties
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.gradle/7.1/gc.properties
+.gradle/7.1/fileHashes/fileHashes.lock
+.gradle/7.1/fileChanges/last-build.bin
+.gradle/7.1/dependencies-accessors/gc.properties
+.gradle/7.1/dependencies-accessors/dependencies-accessors.lock

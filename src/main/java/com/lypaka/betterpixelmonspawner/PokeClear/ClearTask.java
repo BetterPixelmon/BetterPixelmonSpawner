@@ -7,6 +7,7 @@ import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
 import com.lypaka.lypakautils.FancyText;
 import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.*;
@@ -45,7 +46,11 @@ public class ClearTask {
             @Override
             public void run() {
 
-                BetterPixelmonSpawner.server.getPlayerList().getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(ConfigGetters.clearWarningMessage), p.getUniqueID()));
+                for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+
+                    entry.getValue().sendMessage(FancyText.getFormattedText(ConfigGetters.clearWarningMessage), entry.getValue().getUniqueID());
+
+                }
                 clearTimer.schedule(new TimerTask() {
 
                     @Override
@@ -74,7 +79,11 @@ public class ClearTask {
                             }
 
                             String finalMsg = msg;
-                            BetterPixelmonSpawner.server.getPlayerList().getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(count))), p.getUniqueID()));
+                            for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+
+                                entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(count))), entry.getValue().getUniqueID());
+
+                            }
 
                             count = 0;
 

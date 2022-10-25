@@ -15,7 +15,7 @@ public class PokemonSpawnEvent extends Event {
     private PixelmonEntity pokemon;
     private final ServerPlayerEntity player;
     private final PokemonSpawnInfo info;
-    private int groupSize;
+    private final int groupSize;
 
     public PokemonSpawnEvent (PixelmonEntity pokemon, ServerPlayerEntity player, PokemonSpawnInfo info, int groupSize) {
 
@@ -53,12 +53,6 @@ public class PokemonSpawnEvent extends Event {
     public int getGroupSize() {
 
         return this.groupSize;
-
-    }
-
-    public void setGroupSize (int size) {
-
-        this.groupSize = size;
 
     }
 

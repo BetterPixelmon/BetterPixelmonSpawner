@@ -1,6 +1,6 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
-import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
+import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.GUIs.WhereMenu;
 import com.lypaka.lypakautils.FancyText;
 import com.lypaka.lypakautils.PermissionHandler;
@@ -15,7 +15,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 public class WhereCommand {
 
     private static final SuggestionProvider<CommandSource> POKEMON_SUGGESTIONS = (context, builder) ->
-            ISuggestionProvider.suggest(PokemonConfig.fileNames.stream(), builder);
+            ISuggestionProvider.suggest(ConfigGetters.pokemonFiles.stream(), builder);
 
     public WhereCommand (CommandDispatcher<CommandSource> dispatcher) {
 

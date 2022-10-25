@@ -1,116 +1,160 @@
 package com.lypaka.betterpixelmonspawner.Config;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
+import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.*;
-import java.util.*;
+import java.util.ArrayList;
 
 public class PokemonConfig {
 
+    private static String[] FILE_NAMES = new String[ConfigGetters.pokemonFiles.size()];
     private static Path dir;
-    private static final Map<String, ConfigurationLoader<CommentedConfigurationNode>> configLoaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private static final Map<String, CommentedConfigurationNode> configNodes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    public static List<String> fileNames;
+    private static Path[] filePath = new Path[FILE_NAMES.length];
+    private static Path filesDir;
+    private static ArrayList<ConfigurationLoader<CommentedConfigurationNode>> fileLoad = new ArrayList<>(FILE_NAMES.length);
+    private static ArrayList<ConfigurationLoader<CommentedConfigurationNode>> configLoad = new ArrayList<ConfigurationLoader<CommentedConfigurationNode>>(FILE_NAMES.length);
+    private static CommentedConfigurationNode[] configNode = new CommentedConfigurationNode[FILE_NAMES.length];
+    private static HoconConfigurationLoader configurationLoader;
 
-    public static void setup (Path folder) {
+    public static void init (Path path) {
 
-        dir = checkDir(folder);
-        fileNames = new ArrayList<>();
-        load();
+        dir = path;
+        filesDir = checkDir(dir.resolve("pokemon"));
 
-    }
+        if (ConfigGetters.pokemonFiles.size() > 0) {
 
-    public static Path checkDir (Path dir) {
+            for (int i = 0; i < ConfigGetters.pokemonFiles.size(); i++) {
 
-        try {
+                FILE_NAMES[i] = ConfigGetters.pokemonFiles.get(i);
 
-            return Files.exists(dir) ? dir : Files.createDirectories(dir);
+            }
 
-        } catch (IOException e) {
+            for (int j = 0; j < FILE_NAMES.length; j++) {
 
-            throw new RuntimeException("Error creating dir! " + dir, e);
+                filePath[j] = filesDir.resolve(FILE_NAMES[j]);
+
+            }
+
+            load();
 
         }
 
     }
 
+    public static Path checkDir (Path dir) {
+
+        if (!Files.exists(dir)) {
+
+            try {
+
+                Files.createDirectories(dir);
+
+            } catch (IOException e) {
+
+                throw new RuntimeException("Error creating dir! " + dir, e);
+
+            }
+
+        }
+
+        return dir;
+
+    }
+
     public static void load() {
+
+        FILE_NAMES = new String[ConfigGetters.pokemonFiles.size()];
+        filePath = new Path[FILE_NAMES.length];
+        fileLoad = new ArrayList<>(FILE_NAMES.length);
+        configLoad = new ArrayList<ConfigurationLoader<CommentedConfigurationNode>>(FILE_NAMES.length);
+        configNode = new CommentedConfigurationNode[FILE_NAMES.length];
 
         try {
 
-            if (dir.toFile().listFiles().length == 0) {
+            for (int i = 0; i < ConfigGetters.pokemonFiles.size(); i++) {
 
-                String location = "assets/betterpixelmonspawner/pokemon";
+                FILE_NAMES[i] = ConfigGetters.pokemonFiles.get(i);
 
-                // directory is empty, load defaults from assets
-                FileSystem fileSystem = FileSystems.newFileSystem(BetterPixelmonSpawner.class.getClassLoader().getResource(location).toURI(), new HashMap<>());
-                Files.walk(fileSystem.getPath(location)).map(Path::getFileName).map(Path::toString).filter(fileName -> fileName.endsWith(".conf")).forEach(fileName -> {
+            }
 
-                    Path generatedFile = dir.resolve(fileName);
-                    fileNames.add(fileName);
-                    try {
+            for (int j = 0; j < FILE_NAMES.length; j++) {
 
-                        Files.copy(BetterPixelmonSpawner.class.getClassLoader().getResourceAsStream(location + "/" + fileName), dir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-
-                    } catch (IOException e) {
-
-                        BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner could not copy file! " + fileName);
-                        e.printStackTrace();
-
-                    }
-                    HoconConfigurationLoader configurationLoader = HoconConfigurationLoader.builder()
-                            .setPath(generatedFile)
-                            .build();
-                    configLoaders.put(fileName, configurationLoader);
-                    try {
-
-                        configNodes.put(fileName, configurationLoader.load());
-
-                    } catch (IOException e) {
-
-                        e.printStackTrace();
-
-                    }
-
-                });
-
-                fileSystem.close();
-
-            } else {
-
-                for (File file : dir.toFile().listFiles()) {
+                filePath[j] = filesDir.resolve(FILE_NAMES[j]);
+                Path filePathString = Paths.get(".//config//betterpixelmonspawner//pokemon//" + FILE_NAMES[j]);
+                if (!filePath[j].toFile().exists()) {
 
                     try {
 
-                        Path generatedFile = dir.resolve(file.getName());
-                        fileNames.add(file.getName());
-                        HoconConfigurationLoader configurationLoader = HoconConfigurationLoader.builder()
-                                .setPath(generatedFile)
-                                .build();
-                        configLoaders.put(file.getName(), configurationLoader);
-                        configNodes.put(file.getName(), configurationLoader.load());
+                        Files.copy(BetterPixelmonSpawner.class.getClassLoader().getResourceAsStream("assets/betterpixelmonspawner/pokemon/" + FILE_NAMES[j]), filePathString, StandardCopyOption.REPLACE_EXISTING);
 
-                    } catch (IOException e) {
+                    } catch (DirectoryNotEmptyException er) {
 
-                        BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner could not load configuration! " + file.getName());
-                        e.printStackTrace();
+                        // do nothing
+
+                    } catch (NullPointerException ner) {
+
+                        String pokemonName;
+                        if (FILE_NAMES[j].contains("-")) {
+
+                            if (FILE_NAMES[j].contains("ho-oh")) {
+
+                                pokemonName = "ho-oh";
+
+                            } else if (FILE_NAMES[j].contains("hakomo-o")) {
+
+                                pokemonName = "hakomo-o";
+
+                            } else if (FILE_NAMES[j].contains("jangmo-o")) {
+
+                                pokemonName = "jangmo-o";
+
+                            } else if (FILE_NAMES[j].contains("kommo-o")) {
+
+                                pokemonName = "kommo-o";
+
+                            } else if (FILE_NAMES[j].contains("porygon-z")) {
+
+                                pokemonName = "porygon-z";
+
+                            } else {
+
+                                String[] fileSplit = FILE_NAMES[j].split("-");
+                                pokemonName = fileSplit[0];
+
+                            }
+
+                            if (!PixelmonSpecies.has(pokemonName)) {
+
+                                BetterPixelmonSpawner.logger.error("Encountered some kind of error with " + FILE_NAMES[j]);
+
+                            } else {
+
+                                BetterPixelmonSpawner.logger.info("Detected new addition to the Pokemon list, creating file for " + FILE_NAMES[j] + "...");
+                                Files.copy(BetterPixelmonSpawner.class.getClassLoader().getResourceAsStream("assets/betterpixelmonspawner/newPokemonTemplate.conf"), filePathString, StandardCopyOption.REPLACE_EXISTING);
+
+                            }
+
+                        }
 
                     }
 
                 }
+                configurationLoader = HoconConfigurationLoader.builder().setPath(filePath[j]).build();
+                fileLoad.add(j, configurationLoader);
+                configNode[j] = configurationLoader.load();
+                configLoad.add(j, fileLoad.get(j));
+                configLoad.get(j).save(configNode[j]);
 
             }
 
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
 
-            BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner could not access assets!");
+            BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner Pokemon configuration could not load.");
             e.printStackTrace();
 
         }
@@ -119,15 +163,16 @@ public class PokemonConfig {
 
     public static void save() {
 
-        for (Map.Entry<String, ConfigurationLoader<CommentedConfigurationNode>> entry : configLoaders.entrySet()) {
+        for (int j = 0; j < FILE_NAMES.length; j++) {
 
-            try {
+            try{
 
-                entry.getValue().save(configNodes.get(entry.getKey()));
+                configLoad.get(j).save(configNode[j]);
 
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
 
-                BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner could not save configuration! " + entry.getKey() + ".conf");
+                BetterPixelmonSpawner.logger.error("BetterPixelmonSpawner could not save Pokemon configuration.");
                 e.printStackTrace();
 
             }
@@ -136,9 +181,29 @@ public class PokemonConfig {
 
     }
 
+    public static int getIndexFromName (String name) {
+
+        int index = 0;
+        int i = -1;
+        for (String s : FILE_NAMES) {
+
+            if (s.equalsIgnoreCase(name)) {
+
+                i = index;
+                break;
+
+            }
+            index++;
+
+        }
+
+        return i;
+
+    }
+
     public static CommentedConfigurationNode getConfigNode (String name, Object... node) {
 
-        return configNodes.getOrDefault(name, HoconConfigurationLoader.builder().build().createEmptyNode()).getNode(node);
+        return configNode[getIndexFromName(name)].getNode(node);
 
     }
 

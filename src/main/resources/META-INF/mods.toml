@@ -59,7 +59,7 @@ description='''
 [[dependencies.betterpixelmonspawner]]
   modId="lypakautils"
   mandatory=true
-  versionRange="[1.16.5-0.0.5,)"
+  versionRange="[1.16.5-0.0.6,)"
   ordering="NONE"
   side="SERVER"
 [[dependencies.betterpixelmonspawner]]

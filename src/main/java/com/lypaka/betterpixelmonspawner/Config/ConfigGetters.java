@@ -114,6 +114,8 @@ public class ConfigGetters {
     public static int timeSetting;
     public static Map<String, Map<String, String>> lastSpawnMap;
 
+    public static List<String> pokemonFiles;
+
     public static void load() throws ObjectMappingException {
 
         pokeClearEnabled = BetterPixelmonSpawner.configManager.getConfigNode(0, "PokeClear", "Enabled").getBoolean();
@@ -219,6 +221,8 @@ public class ConfigGetters {
         nextUpdatedSlot = BetterPixelmonSpawner.configManager.getConfigNode(8, "List-Settings", "Next-Updated-Slot").getInt();
         timeSetting = BetterPixelmonSpawner.configManager.getConfigNode(8, "List-Settings", "Time-Setting").getInt();
         lastSpawnMap = BetterPixelmonSpawner.configManager.getConfigNode(8, "Spawns").getValue(new TypeToken<Map<String, Map<String, String>>>() {});
+
+        pokemonFiles = BetterPixelmonSpawner.configManager.getConfigNode(10, "Pokemon").getList(TypeToken.of(String.class));
 
     }
 

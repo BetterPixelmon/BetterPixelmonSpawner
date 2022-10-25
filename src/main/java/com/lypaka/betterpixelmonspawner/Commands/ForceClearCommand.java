@@ -13,6 +13,9 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+import java.util.Map;
+import java.util.UUID;
+
 public class ForceClearCommand {
 
     public ForceClearCommand (CommandDispatcher<CommandSource> dispatcher) {
@@ -58,8 +61,11 @@ public class ForceClearCommand {
                                                 }
 
                                                 String finalMsg = msg;
-                                                BetterPixelmonSpawner.server.getPlayerList().getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(ClearTask.count))), p.getUniqueID()));
+                                                for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
 
+                                                    entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(ClearTask.count))), entry.getValue().getUniqueID());
+
+                                                }
                                                 ClearTask.count = 0;
 
                                             });

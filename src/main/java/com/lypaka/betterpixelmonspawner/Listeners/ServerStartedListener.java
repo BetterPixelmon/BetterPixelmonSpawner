@@ -1,7 +1,12 @@
 package com.lypaka.betterpixelmonspawner.Listeners;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
+import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.InfoRegistry;
+import com.lypaka.betterpixelmonspawner.Spawners.LegendarySpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.MiscSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.NPCSpawner;
+import com.lypaka.betterpixelmonspawner.Spawners.PokemonSpawner;
 import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
 import com.pixelmonmod.pixelmon.Pixelmon;
@@ -33,13 +38,10 @@ public class ServerStartedListener {
         MinecraftForge.EVENT_BUS.register(new PokemonSpawnListener());
         MinecraftForge.EVENT_BUS.register(new ShinySpawnListener());
 
-        // I'll never understand what kind of egotistical group NEEDS their own event bus for no reason, but whatever, let's be different for funzies.
         Pixelmon.EVENT_BUS.register(new BattleListener());
         Pixelmon.EVENT_BUS.register(new CaptureListener());
         Pixelmon.EVENT_BUS.register(new DefeatListener());
 
-        // Most importantly, we gotta turn their laggy shit off so the server doesn't shit itself and die.
-        // Timer is needed to delay the task, as it will error out if not delayed, and I'm not aware of any event that fires later than this one.
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
 
@@ -53,6 +55,12 @@ public class ServerStartedListener {
             }
 
         }, 3000);
+
+        LegendarySpawner.startTimer();
+        MiscSpawner.startTimer();
+        NPCSpawner.startTimer();
+        PokemonSpawner.startTimer();
+        ClearTask.startClearTask();
 
     }
 

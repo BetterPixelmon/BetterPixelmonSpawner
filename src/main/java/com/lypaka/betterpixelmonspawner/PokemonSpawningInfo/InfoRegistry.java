@@ -33,7 +33,7 @@ public class InfoRegistry {
         waterFishList = new ArrayList<>();
         lavaFishList = new ArrayList<>();
         List<String> erroredNames = new ArrayList<>();
-        for (String name : PokemonConfig.fileNames) {
+        for (String name : ConfigGetters.pokemonFiles) {
 
             // I could just use the name variable here but I'm too afraid it would fuck something else up by changing it now
             // Using this to fix legendaries not getting filtered out of the natural spawner if that setting is enabled

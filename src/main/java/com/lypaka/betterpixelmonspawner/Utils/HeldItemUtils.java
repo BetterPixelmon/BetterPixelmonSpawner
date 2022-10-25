@@ -2,7 +2,7 @@ package com.lypaka.betterpixelmonspawner.Utils;
 
 import com.google.common.reflect.TypeToken;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
-import com.lypaka.betterpixelmonspawner.Config.PokemonConfig;
+import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.ExternalAbilities.CompoundEyes;
 import com.lypaka.betterpixelmonspawner.ExternalAbilities.SuperLuck;
 import com.lypaka.lypakautils.ItemStackBuilder;
@@ -24,7 +24,7 @@ public class HeldItemUtils {
         // index 9
         heldItemMap = new HashMap<>();
         BetterPixelmonSpawner.logger.info("Registering wild Pokemon held items...");
-        for (String name : PokemonConfig.fileNames) {
+        for (String name : ConfigGetters.pokemonFiles) {
 
             name = name.replace(".conf", "");
             if (!BetterPixelmonSpawner.configManager.getConfigNode(9, name).isVirtual()) {
