@@ -24,43 +24,47 @@ public class OptCommand {
 
     public OptCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-        dispatcher.register(
-                Commands.literal("betterpixelmonspawner")
-                        .then(
-                                Commands.literal("opt")
-                                        .then(
-                                                Commands.argument("option", StringArgumentType.word())
-                                                        .suggests(OPTION_SUGGESTIONS)
-                                                        .then(
-                                                                Commands.argument("module", StringArgumentType.word())
-                                                                        .suggests(MODULE_SUGGESTIONS)
-                                                                        .executes(c -> {
+        for (String a : BetterPixelmonSpawnerCommand.ALIASES) {
 
-                                                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
+            dispatcher.register(
+                    Commands.literal(a)
+                            .then(
+                                    Commands.literal("opt")
+                                            .then(
+                                                    Commands.argument("option", StringArgumentType.word())
+                                                            .suggests(OPTION_SUGGESTIONS)
+                                                            .then(
+                                                                    Commands.argument("module", StringArgumentType.word())
+                                                                            .suggests(MODULE_SUGGESTIONS)
+                                                                            .executes(c -> {
 
-                                                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
-                                                                                String option = StringArgumentType.getString(c, "option");
-                                                                                String module = StringArgumentType.getString(c, "module");
+                                                                                if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                                                                                if (option.equalsIgnoreCase("in")) {
+                                                                                    ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                                                    String option = StringArgumentType.getString(c, "option");
+                                                                                    String module = StringArgumentType.getString(c, "module");
 
-                                                                                    SpawnerUtils.remove(player, module);
+                                                                                    if (option.equalsIgnoreCase("in")) {
 
-                                                                                } else {
+                                                                                        SpawnerUtils.remove(player, module);
 
-                                                                                    SpawnerUtils.add(player, module);
+                                                                                    } else {
+
+                                                                                        SpawnerUtils.add(player, module);
+
+                                                                                    }
 
                                                                                 }
 
-                                                                            }
+                                                                                return 1;
 
-                                                                            return 1;
+                                                                            })
+                                                            )
+                                            )
+                            )
+            );
 
-                                                                        })
-                                                        )
-                                        )
-                        )
-        );
+        }
 
     }
 

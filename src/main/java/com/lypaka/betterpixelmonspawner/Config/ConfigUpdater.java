@@ -79,6 +79,7 @@ public class ConfigUpdater {
         if (needsSaving) {
 
             BetterPixelmonSpawner.configManager.save();
+            ConfigGetters.load(); // run this to reset values after conversion
 
         }
 

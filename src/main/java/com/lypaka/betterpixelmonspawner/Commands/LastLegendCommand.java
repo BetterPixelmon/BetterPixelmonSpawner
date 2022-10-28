@@ -12,31 +12,35 @@ public class LastLegendCommand {
 
     public LastLegendCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-        dispatcher.register(
-                Commands.literal("betterpixelmonspawner")
-                        .then(
-                                Commands.literal("lastlegend")
-                                        .executes(c -> {
+        for (String a : BetterPixelmonSpawnerCommand.ALIASES) {
 
-                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
+            dispatcher.register(
+                    Commands.literal(a)
+                            .then(
+                                    Commands.literal("lastlegend")
+                                            .executes(c -> {
 
-                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
-                                                if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.lastlegend")) {
+                                                if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                                                    player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
-                                                    return 0;
+                                                    ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                    if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.lastlegend")) {
+
+                                                        player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
+                                                        return 0;
+
+                                                    }
+
+                                                    LastLegendList.openList(player);
 
                                                 }
 
-                                                LastLegendList.openList(player);
+                                                return 1;
 
-                                            }
+                                            })
+                            )
+            );
 
-                                            return 1;
-
-                                        })
-                        )
-        );
+        }
 
     }
 

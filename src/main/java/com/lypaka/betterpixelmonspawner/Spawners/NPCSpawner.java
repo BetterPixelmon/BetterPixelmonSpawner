@@ -191,7 +191,7 @@ public class NPCSpawner {
                             }
 
                         }
-                        entity.setLocationAndAngles(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, 0, 0);
+                        entity.setLocationAndAngles(spawn.getX() + 0.5, spawn.getY() + 1, spawn.getZ() + 0.5, 0, 0);
                         NPCSpawnEvent npcSpawnEvent = new NPCSpawnEvent((NPCEntity) entity, player);
                         MinecraftForge.EVENT_BUS.post(npcSpawnEvent);
                         if (!npcSpawnEvent.isCanceled()) {

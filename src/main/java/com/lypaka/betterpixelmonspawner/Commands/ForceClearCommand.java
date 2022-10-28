@@ -1,6 +1,5 @@
 package com.lypaka.betterpixelmonspawner.Commands;
 
-import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.Listeners.JoinListener;
 import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
@@ -20,61 +19,65 @@ public class ForceClearCommand {
 
     public ForceClearCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-        dispatcher.register(
-                Commands.literal("betterpixelmonspawner")
-                        .then(
-                                Commands.literal("clear")
-                                        .executes(c -> {
+        for (String a : BetterPixelmonSpawnerCommand.ALIASES) {
 
-                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
+            dispatcher.register(
+                    Commands.literal(a)
+                            .then(
+                                    Commands.literal("clear")
+                                            .executes(c -> {
 
-                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
-                                                if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.admin")) {
+                                                if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                                                    player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
-                                                    return 0;
+                                                    ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                    if (!PermissionHandler.hasPermission(player, "betterpixelmonspawner.command.admin")) {
 
-                                                }
-
-                                            }
-
-                                            ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
-
-                                                JoinListener.pokemonMap.entrySet().removeIf(entry -> {
-
-                                                    PokemonCounter.checkForDespawnPokemon(entry.getKey());
-                                                    if (!com.lypaka.lypakautils.JoinListener.playerMap.containsKey(entry.getKey())) {
-
-                                                        return true;
+                                                        player.sendMessage(FancyText.getFormattedText("&cYou don't have permission to use this command!"), player.getUniqueID());
+                                                        return 0;
 
                                                     }
 
-                                                    return false;
+                                                }
+
+                                                ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
+
+                                                    JoinListener.pokemonMap.entrySet().removeIf(entry -> {
+
+                                                        PokemonCounter.checkForDespawnPokemon(entry.getKey());
+                                                        if (!com.lypaka.lypakautils.JoinListener.playerMap.containsKey(entry.getKey())) {
+
+                                                            return true;
+
+                                                        }
+
+                                                        return false;
+
+                                                    });
+
+                                                    String msg = ConfigGetters.pokeClearMessage.replace("%number%", String.valueOf(ClearTask.count));
+                                                    if (ClearTask.count == 1 && msg.contains("have")) {
+
+                                                        msg = msg.replace("have", "has");
+
+                                                    }
+
+                                                    String finalMsg = msg;
+                                                    for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+
+                                                        entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(ClearTask.count))), entry.getValue().getUniqueID());
+
+                                                    }
+                                                    ClearTask.count = 0;
 
                                                 });
 
-                                                String msg = ConfigGetters.pokeClearMessage.replace("%number%", String.valueOf(ClearTask.count));
-                                                if (ClearTask.count == 1 && msg.contains("have")) {
+                                                return 1;
 
-                                                    msg = msg.replace("have", "has");
+                                            })
+                            )
+            );
 
-                                                }
-
-                                                String finalMsg = msg;
-                                                for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
-
-                                                    entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(ClearTask.count))), entry.getValue().getUniqueID());
-
-                                                }
-                                                ClearTask.count = 0;
-
-                                            });
-
-                                            return 1;
-
-                                        })
-                        )
-        );
+        }
 
     }
 

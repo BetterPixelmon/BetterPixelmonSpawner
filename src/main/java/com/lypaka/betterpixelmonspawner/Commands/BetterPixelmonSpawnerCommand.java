@@ -6,11 +6,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.command.ConfigCommand;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * FUCK Brigadier
  */
 @Mod.EventBusSubscriber(modid = BetterPixelmonSpawner.MOD_ID)
 public class BetterPixelmonSpawnerCommand {
+
+    public static List<String> ALIASES = Arrays.asList("betterpixelmonspawner", "bps");
 
     @SubscribeEvent
     public static void onCommandRegistration (RegisterCommandsEvent event) {

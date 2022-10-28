@@ -17,42 +17,46 @@ public class ListCommand {
 
     public ListCommand (CommandDispatcher<CommandSource> dispatcher) {
 
-        dispatcher.register(
-                Commands.literal("betterpixelmonspawner")
-                        .then(
-                                Commands.literal("list")
-                                        .then(
-                                                Commands.argument("biome", StringArgumentType.word())
-                                                        .suggests(BIOME_SUGGESTIONS)
-                                                        .executes(c -> {
+        for (String a : BetterPixelmonSpawnerCommand.ALIASES) {
 
-                                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
+            dispatcher.register(
+                    Commands.literal(a)
+                            .then(
+                                    Commands.literal("list")
+                                            .then(
+                                                    Commands.argument("biome", StringArgumentType.word())
+                                                            .suggests(BIOME_SUGGESTIONS)
+                                                            .executes(c -> {
 
-                                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
-                                                                String biome = StringArgumentType.getString(c, "biome");
-                                                                MainSpawnMenu.open(player, biome);
+                                                                if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                                                            }
+                                                                    ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                                    String biome = StringArgumentType.getString(c, "biome");
+                                                                    MainSpawnMenu.open(player, biome);
 
-                                                            return 1;
+                                                                }
 
-                                                        })
-                                        )
-                                        .executes(c -> {
+                                                                return 1;
 
-                                            if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
+                                                            })
+                                            )
+                                            .executes(c -> {
 
-                                                ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
-                                                String biome = player.world.getBiome(player.getPosition()).getRegistryName().toString();
-                                                MainSpawnMenu.open(player, biome);
+                                                if (c.getSource().getEntity() instanceof ServerPlayerEntity) {
 
-                                            }
+                                                    ServerPlayerEntity player = (ServerPlayerEntity) c.getSource().getEntity();
+                                                    String biome = player.world.getBiome(player.getPosition()).getRegistryName().toString();
+                                                    MainSpawnMenu.open(player, biome);
 
-                                            return 1;
+                                                }
 
-                                        })
-                        )
-        );
+                                                return 1;
+
+                                            })
+                            )
+            );
+
+        }
 
     }
 
