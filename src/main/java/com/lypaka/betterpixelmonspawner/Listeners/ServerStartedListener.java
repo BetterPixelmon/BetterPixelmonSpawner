@@ -48,7 +48,7 @@ public class ServerStartedListener {
             @Override
             public void run() {
 
-                SpawnerCoordinator.PROCESSOR.shutdown();
+                //SpawnerCoordinator.PROCESSOR.shutdown();
                 PixelmonSpawning.coordinator.deactivate();
                 PixelmonSpawning.coordinator = null;
 
