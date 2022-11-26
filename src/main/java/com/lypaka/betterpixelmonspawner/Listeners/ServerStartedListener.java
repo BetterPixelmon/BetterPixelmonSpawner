@@ -10,7 +10,6 @@ import com.lypaka.betterpixelmonspawner.Spawners.PokemonSpawner;
 import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
 import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.api.spawning.SpawnerCoordinator;
 import com.pixelmonmod.pixelmon.spawning.PixelmonSpawning;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

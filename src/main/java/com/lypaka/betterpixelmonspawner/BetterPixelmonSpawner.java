@@ -26,7 +26,7 @@ public class BetterPixelmonSpawner {
 
     public static final String MOD_ID = "betterpixelmonspawner";
     public static final String MOD_NAME = "BetterPixelmonSpawner";
-    public static final String VERSION = "2.0.0";
+    public static final String VERSION = "2.0.1";
     public static Logger logger = LogManager.getLogger("Better Pixelmon Spawner");
     public static Path dir;
     public static List<String> alolans = new ArrayList<>();

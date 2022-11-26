@@ -25,7 +25,7 @@ public class CaptureListener {
     public void onCatchAttempt (CaptureEvent.StartCapture event) {
 
         PixelmonEntity pokemon = event.getPokemon();
-        ServerPlayerEntity player = event.player;
+        ServerPlayerEntity player = event.getPlayer();
 
         if (PixelmonSpecies.getLegendaries(false).contains(pokemon.getSpecies().getDex()) || PixelmonSpecies.getUltraBeasts().contains(pokemon.getSpecies().getDex()) || ConfigGetters.specialLegendaries.contains(pokemon.getPokemonName())) {
 
@@ -106,7 +106,7 @@ public class CaptureListener {
 
                     try {
 
-                        LegendaryListing.updatePokemonStatusCaptured(pokemon, event.player);
+                        LegendaryListing.updatePokemonStatusCaptured(pokemon, event.getPlayer());
 
                     } catch (ObjectMappingException e) {
 
