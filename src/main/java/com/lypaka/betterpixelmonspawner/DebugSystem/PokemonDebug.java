@@ -1,8 +1,8 @@
 package com.lypaka.betterpixelmonspawner.DebugSystem;
 
+import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
-import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
 import com.pixelmonmod.pixelmon.listener.RepelHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;

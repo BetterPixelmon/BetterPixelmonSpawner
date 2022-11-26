@@ -1,5 +1,6 @@
 package com.lypaka.betterpixelmonspawner.PokeClear;
 
+import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.Listeners.JoinListener;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
@@ -9,10 +10,7 @@ import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
 public class ClearTask {
 
