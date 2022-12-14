@@ -146,6 +146,14 @@ public class ClearTask {
                 blacklisted = true;
 
 
+            } else if (entry.contains("outbreak")) {
+
+                if (pokemon.getPokemon().getPersistentData().contains("Outbreak")) {
+
+                    blacklisted = true;
+
+                }
+
             }
 
         }

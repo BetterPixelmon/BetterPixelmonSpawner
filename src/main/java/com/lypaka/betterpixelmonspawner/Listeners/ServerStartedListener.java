@@ -1,5 +1,6 @@
 package com.lypaka.betterpixelmonspawner.Listeners;
 
+import com.lypaka.betteroutbreaks.Outbreaks.OutbreakSpawner;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.InfoRegistry;
@@ -40,6 +41,12 @@ public class ServerStartedListener {
         InfoRegistry.loadPokemonSpawnData();
         BetterPixelmonSpawner.logger.info("Registering Boss Pokemon spawns...");
         BossPokemonUtils.loadBossList();
+
+        if (ModList.get().isLoaded("betteroutbreaks")) {
+
+            OutbreakSpawner.startNaturalSpawner();
+
+        }
 
         MinecraftForge.EVENT_BUS.register(new JoinListener());
         MinecraftForge.EVENT_BUS.register(new RespawnListener());

@@ -44,6 +44,12 @@ public class PokemonSpawnList {
 
     }
 
+    public Map<Integer, List<PokemonSpawnInfo>> getSpawns() {
+
+        return this.spawns;
+
+    }
+
     public void build() {
 
         if (BiomeList.biomePokemonMap.containsKey(this.biome)) {

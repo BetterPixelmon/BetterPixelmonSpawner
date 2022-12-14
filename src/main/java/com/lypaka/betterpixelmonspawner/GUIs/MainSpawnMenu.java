@@ -62,19 +62,30 @@ public class MainSpawnMenu {
 
     private static Button getPokemonButton (ServerPlayerEntity player, String biome) {
 
+        PokemonSpawnList list = new PokemonSpawnList(player, biome);
+        list.build();
         Pokemon pixelmon = PokemonBuilder.builder().species("Bulbasaur").build();
         ItemStack bulbasaur = SpriteItemHelper.getPhoto(pixelmon);
-        bulbasaur.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for normal Pokemon!"));
-        return GooeyButton.builder()
-                .display(bulbasaur)
-                .onClick(() -> {
+        if (list.getSpawns().size() > 0) {
 
-                    PokemonSpawnList list = new PokemonSpawnList(player, biome);
-                    list.build();
-                    list.open(1);
+            bulbasaur.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for normal Pokemon!"));
+            return GooeyButton.builder()
+                    .display(bulbasaur)
+                    .onClick(() -> {
 
-                })
-                .build();
+                        list.open(1);
+
+                    })
+                    .build();
+
+        } else {
+
+            bulbasaur.setDisplayName(FancyText.getFormattedText("&eNo Pokemon spawn in this biome!"));
+            return GooeyButton.builder()
+                    .display(bulbasaur)
+                    .build();
+
+        }
 
     }
 
@@ -98,19 +109,28 @@ public class MainSpawnMenu {
 
     private static Button getLegendaryButton (ServerPlayerEntity player, String biome) {
 
+        LegendarySpawnList list = new LegendarySpawnList(player, biome);
+        list.build();
         Pokemon pixelmon = PokemonBuilder.builder().species("Mew").build();
         ItemStack mew = SpriteItemHelper.getPhoto(pixelmon);
-        mew.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for legendary Pokemon!"));
-        return GooeyButton.builder()
-                .display(mew)
-                .onClick(() -> {
+        if (list.getSpawns().size() > 0) {
 
-                    LegendarySpawnList list = new LegendarySpawnList(player, biome);
-                    list.build();
-                    list.open(1);
+            mew.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for legendary Pokemon!"));
+            return GooeyButton.builder()
+                    .display(mew)
+                    .onClick(() -> {
 
-                })
-                .build();
+                        list.open(1);
+
+                    })
+                    .build();
+
+        } else {
+
+            mew.setDisplayName(FancyText.getFormattedText("&eNo legendary Pokemon spawn in this biome!"));
+            return GooeyButton.builder().display(mew).build();
+
+        }
 
     }
 

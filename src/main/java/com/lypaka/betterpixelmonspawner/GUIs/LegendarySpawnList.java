@@ -46,7 +46,7 @@ public class LegendarySpawnList {
 
     public void build() {
 
-        if (BiomeList.biomePokemonMap.containsKey(this.biome)) {
+        if (BiomeList.biomeLegendaryMap.containsKey(this.biome)) {
 
             List<WorldTime> currentTimes = WorldTime.getCurrent(this.player.world);
             String weather;
@@ -114,36 +114,32 @@ public class LegendarySpawnList {
                 }
 
             }
-            if (BiomeList.biomeLegendaryMap.containsKey(this.biome)) {
+            List<LegendarySpawnInfo> pokemonThatSpawn = BiomeList.biomeLegendaryMap.get(this.biome);
+            List<String> pokemonNames = new ArrayList<>();
+            for (LegendarySpawnInfo psi : pokemonThatSpawn) {
 
-                List<LegendarySpawnInfo> pokemonThatSpawn = BiomeList.biomeLegendaryMap.get(this.biome);
-                List<String> pokemonNames = new ArrayList<>();
-                for (LegendarySpawnInfo psi : pokemonThatSpawn) {
+                if (!pokemonNames.contains(psi.getName())) {
 
-                    if (!pokemonNames.contains(psi.getName())) {
-
-                        pokemonNames.add(psi.getName());
-
-                    }
+                    pokemonNames.add(psi.getName());
 
                 }
 
-                List<LegendarySpawnInfo> base = new ArrayList<>(pokemonNames.size());
-                List<String> usedNames = new ArrayList<>();
-                for (LegendarySpawnInfo pokemonSpawnInfo : pokemonThatSpawn) {
+            }
 
-                    if (currentTimes.contains(WorldTime.valueOf(pokemonSpawnInfo.getTime().toUpperCase()))) {
+            List<LegendarySpawnInfo> base = new ArrayList<>(pokemonNames.size());
+            List<String> usedNames = new ArrayList<>();
+            for (LegendarySpawnInfo pokemonSpawnInfo : pokemonThatSpawn) {
 
-                        if (pokemonSpawnInfo.getWeather().equalsIgnoreCase(weather)) {
+                if (currentTimes.contains(WorldTime.valueOf(pokemonSpawnInfo.getTime().toUpperCase()))) {
 
-                            if (pokemonSpawnInfo.getSpawnLocation().contains(location)) {
+                    if (pokemonSpawnInfo.getWeather().equalsIgnoreCase(weather)) {
 
-                                if (!usedNames.contains(pokemonSpawnInfo.getName())) {
+                        if (pokemonSpawnInfo.getSpawnLocation().contains(location)) {
 
-                                    usedNames.add(pokemonSpawnInfo.getName());
-                                    base.add(pokemonSpawnInfo);
+                            if (!usedNames.contains(pokemonSpawnInfo.getName())) {
 
-                                }
+                                usedNames.add(pokemonSpawnInfo.getName());
+                                base.add(pokemonSpawnInfo);
 
                             }
 
@@ -153,51 +149,51 @@ public class LegendarySpawnList {
 
                 }
 
-                List<LegendarySpawnInfo> pokemonToDisplay = arrangePokemon(base);
-                int spawnAmount = pokemonNames.size(); // we use this list because of the different PokemonSpawnInfo objects for each Pokemon
-                int pages = 1;
-                if (spawnAmount > 54) {
+            }
 
-                    int dividedInt = spawnAmount / 54;
-                    double dividedDouble = (double) spawnAmount / 54;
-                    double dummyDouble = dividedInt + 0.0;
-                    if (dividedDouble > dummyDouble) {
+            List<LegendarySpawnInfo> pokemonToDisplay = arrangePokemon(base);
+            int spawnAmount = pokemonNames.size(); // we use this list because of the different PokemonSpawnInfo objects for each Pokemon
+            int pages = 1;
+            if (spawnAmount > 54) {
 
-                        pages = dividedInt + 1;
+                int dividedInt = spawnAmount / 54;
+                double dividedDouble = (double) spawnAmount / 54;
+                double dummyDouble = dividedInt + 0.0;
+                if (dividedDouble > dummyDouble) {
+
+                    pages = dividedInt + 1;
+
+                }
+
+            }
+
+            for (int i = 1; i <= pages; i++) {
+
+                this.pages.add(i);
+
+            }
+
+            for (int i = 1; i <= pages; i++) {
+
+                setInts(i);
+                List<LegendarySpawnInfo> pokemonToPutInMap = new ArrayList<>(pokemonToDisplay.size());
+                for (int j = this.min; j < this.max; j++) {
+
+                    try {
+
+                        LegendarySpawnInfo spawnInfo = pokemonToDisplay.get(j);
+                        pokemonToPutInMap.add(spawnInfo);
+
+                    } catch (IndexOutOfBoundsException er) {
+
+                        break;
 
                     }
 
                 }
 
-                for (int i = 1; i <= pages; i++) {
-
-                    this.pages.add(i);
-
-                }
-
-                for (int i = 1; i <= pages; i++) {
-
-                    setInts(i);
-                    List<LegendarySpawnInfo> pokemonToPutInMap = new ArrayList<>(pokemonToDisplay.size());
-                    for (int j = this.min; j < this.max; j++) {
-
-                        try {
-
-                            LegendarySpawnInfo spawnInfo = pokemonToDisplay.get(j);
-                            pokemonToPutInMap.add(spawnInfo);
-
-                        } catch (IndexOutOfBoundsException er) {
-
-                            break;
-
-                        }
-
-                    }
-
-                    List<LegendarySpawnInfo> arrangedList = arrangePokemon(pokemonToPutInMap);
-                    this.spawns.put(i, arrangedList);
-
-                }
+                List<LegendarySpawnInfo> arrangedList = arrangePokemon(pokemonToPutInMap);
+                this.spawns.put(i, arrangedList);
 
             }
 
@@ -236,6 +232,12 @@ public class LegendarySpawnList {
         }
 
         UIManager.openUIForcefully(this.player, page);
+
+    }
+
+    public Map<Integer, List<LegendarySpawnInfo>> getSpawns() {
+
+        return this.spawns;
 
     }
 

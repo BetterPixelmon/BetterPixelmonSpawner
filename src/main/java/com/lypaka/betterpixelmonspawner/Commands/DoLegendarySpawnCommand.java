@@ -351,7 +351,12 @@ public class DoLegendarySpawnCommand {
                                                         selectedSpawn = StormDrain.tryStormDrainOnLegendary(selectedSpawn, possibleSpawns);
 
                                                     }
-                                                    if (selectedSpawn == null) return;
+                                                    if (selectedSpawn == null) {
+
+                                                        BetterPixelmonSpawner.logger.info("No legendaries spawn in the selected player's biome!");
+                                                        return;
+
+                                                    }
                                                     String[] levelRange = selectedSpawn.getLevelRange().split("-");
                                                     int max = Integer.parseInt(levelRange[0]);
                                                     int min = Integer.parseInt(levelRange[1]);
