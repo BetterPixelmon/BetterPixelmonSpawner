@@ -552,9 +552,11 @@ public class LegendarySpawner {
                     MinecraftForge.EVENT_BUS.post(legendarySpawnEvent);
                     if (!legendarySpawnEvent.isCanceled()) {
 
+                        int finalLevel = level;
                         ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 
                             player.world.addEntity(legendarySpawnEvent.getPokemon());
+                            legendarySpawnEvent.getPokemon().getPokemon().setLevelNum(finalLevel);
                             LegendaryUtils.handleGlowing(legendarySpawnEvent.getPokemon());
                             LegendaryUtils.handleGracePeriod(legendarySpawnEvent.getPokemon(), legendarySpawnEvent.getPlayer());
                             LegendaryInfoGetters.setLegendaryName(legendarySpawnEvent.getPokemon().getPokemonName());
@@ -566,10 +568,14 @@ public class LegendarySpawner {
                             legendarySpawnEvent.getPokemon().addTag("SpawnedLegendary"); // used for the last legend list, so the event listeners know what is a BPS spawned legendary
                             if (!ConfigGetters.legendarySpawnMessage.equalsIgnoreCase("")) {
 
-                                BetterPixelmonSpawner.server.getPlayerList() .getPlayers().forEach(p -> p.sendMessage(FancyText.getFormattedText(ConfigGetters.legendarySpawnMessage
-                                                .replace("%biome%", getPrettyBiomeName(legendarySpawnEvent.getPokemon().world.getBiome(legendarySpawnEvent.getPokemon().getPosition()).getRegistryName().toString()))
-                                                .replace("%pokemon%", legendarySpawnEvent.getPokemon().getPokemonName())
-                                                .replace("%player%", legendarySpawnEvent.getPlayer().getName().getString())), p.getUniqueID()));
+                                for (Map.Entry<UUID, ServerPlayerEntity> entry : JoinListener.playerMap.entrySet()) {
+
+                                    entry.getValue().sendMessage(FancyText.getFormattedText(ConfigGetters.legendarySpawnMessage
+                                            .replace("%biome%", LegendarySpawner.getPrettyBiomeName(legendarySpawnEvent.getPokemon().world.getBiome(legendarySpawnEvent.getPokemon().getPosition()).getRegistryName().toString()))
+                                            .replace("%pokemon%", legendarySpawnEvent.getPokemon().getPokemonName())
+                                            .replace("%player%", legendarySpawnEvent.getPlayer().getName().getString())), entry.getValue().getUniqueID());
+
+                                }
 
                             }
 
