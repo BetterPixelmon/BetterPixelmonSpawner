@@ -15,8 +15,11 @@ import com.lypaka.lypakautils.FancyText;
 import com.lypaka.lypakautils.ItemStackBuilder;
 import com.lypaka.lypakautils.JoinListener;
 import com.lypaka.lypakautils.WorldDimGetter;
+import com.lypaka.pixelboosters.Boosters.BoosterTask;
+import com.lypaka.pixelboosters.PixelBoosters;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonBuilder;
+import com.pixelmonmod.pixelmon.api.pokemon.stats.IVStore;
 import com.pixelmonmod.pixelmon.api.storage.PlayerPartyStorage;
 import com.pixelmonmod.pixelmon.api.storage.StorageProxy;
 import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
@@ -108,8 +111,7 @@ public class LegendarySpawner {
 
                 } else {
 
-                    // TODO ADD THIS BACK WHEN PIXELBOOSTERS GETS UPDATED TO 1.16.5
-                    /*if (BetterPixelmonSpawner.isPixelBoostersLoaded) {
+                    if (BetterPixelmonSpawner.isPixelBoostersLoaded) {
 
                         BoosterTask legendaryTask = null;
                         for (BoosterTask task : BoosterTask.activeTasks) {
@@ -124,23 +126,14 @@ public class LegendarySpawner {
                         }
                         if (legendaryTask != null) {
 
-                            int option = PixelBoosters.boosterConfigManager.getConfigNode(com.lypaka.pixelboosters.Config.ConfigGetters.getIndexFromBooster("legendary"), "Options", "Use-Option").getInt();
-                            if (option == 1) {
+                            List<UUID> boostedPlayerUUIDs = legendaryTask.playerList;
+                            if (boostedPlayerUUIDs.size() > 0) {
 
-                                List<UUID> boostedPlayerUUIDs = legendaryTask.playerList;
-                                if (boostedPlayerUUIDs.size() > 0) {
+                                double boostedChance = PixelBoosters.boosterConfigManager.getConfigNode(com.lypaka.pixelboosters.Config.ConfigGetters.getIndexFromBooster("legendary"), "Option-1-Settings", "Boosted-Chance").getDouble();
+                                if (RandomHelper.getRandomChance(boostedChance)) {
 
-                                    double boostedChance = PixelBoosters.boosterConfigManager.getConfigNode(com.lypaka.pixelboosters.Config.ConfigGetters.getIndexFromBooster("legendary"), "Option-1-Settings", "Boosted-Chance").getDouble();
-                                    if (RandomHelper.getRandomChance(boostedChance)) {
-
-                                        UUID uuid = RandomHelper.getRandomElementFromList(boostedPlayerUUIDs);
-                                        player = JoinListener.playerMap.get(uuid);
-
-                                    } else {
-
-                                        player = RandomHelper.getRandomElementFromList(onlinePlayers);
-
-                                    }
+                                    UUID uuid = RandomHelper.getRandomElementFromList(boostedPlayerUUIDs);
+                                    player = JoinListener.playerMap.get(uuid);
 
                                 } else {
 
@@ -160,11 +153,11 @@ public class LegendarySpawner {
 
                         }
 
-                    } else {*/
+                    } else {
 
                         player = RandomHelper.getRandomElementFromList(onlinePlayers);
 
-                    //}
+                    }
 
                 }
                 String worldName = player.getServerWorld().getWorld().toString().replace("ServerLevel[", "").replace("]", "");
@@ -553,6 +546,8 @@ public class LegendarySpawner {
                     }
                     pokemon.setLocationAndAngles(safeSpawn.getX() + BetterPixelmonSpawner.random.nextDouble(), safeSpawn.getY(), safeSpawn.getZ() + BetterPixelmonSpawner.random.nextDouble(),0, 0);
 
+                    int[] newIVs = new int[]{RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31)};
+                    pokemon.getPokemon().getStats().setIVs(new IVStore(newIVs));
                     LegendarySpawnEvent legendarySpawnEvent = new LegendarySpawnEvent(pokemon, player, selectedSpawn);
                     MinecraftForge.EVENT_BUS.post(legendarySpawnEvent);
                     if (!legendarySpawnEvent.isCanceled()) {

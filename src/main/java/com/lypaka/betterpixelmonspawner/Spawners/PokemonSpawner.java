@@ -25,7 +25,9 @@ import com.pixelmonmod.pixelmon.api.config.PixelmonConfigProxy;
 import com.pixelmonmod.pixelmon.api.pokemon.Element;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonBuilder;
+import com.pixelmonmod.pixelmon.api.pokemon.species.Stats;
 import com.pixelmonmod.pixelmon.api.pokemon.species.aggression.Aggression;
+import com.pixelmonmod.pixelmon.api.pokemon.stats.IVStore;
 import com.pixelmonmod.pixelmon.api.storage.PlayerPartyStorage;
 import com.pixelmonmod.pixelmon.api.storage.StorageProxy;
 import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
@@ -337,8 +339,24 @@ public class PokemonSpawner {
                                         }
 
                                         form = form.substring(1); // removes that first _ from the String
-                                        pokemon = PokemonBuilder.builder().species(pokemonName).build().getOrCreatePixelmon();
-                                        pokemon.setForm(form);
+                                        Pokemon tempPokemon = PokemonBuilder.builder().species(pokemonName).build();
+                                        pokemon = null;
+                                        for (Stats forms : tempPokemon.getSpecies().getForms()) {
+
+                                            if (forms.getName().equalsIgnoreCase(form)) {
+
+                                                pokemon = PokemonBuilder.builder().species(pokemonName).form(form).build().getOrCreatePixelmon();
+                                                break;
+
+                                            }
+
+                                        }
+                                        if (pokemon == null) {
+
+                                            pokemon = PokemonBuilder.builder().species(pokemonName).palette(form).build().getOrCreatePixelmon();
+
+                                        }
+
 
                                     }
 
@@ -528,6 +546,8 @@ public class PokemonSpawner {
 
                                 }
                                 pokemon = PokemonUtils.validatePokemon(pokemon, level);
+                                int[] newIVs = new int[]{RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31), RandomHelper.getRandomNumberBetween(1, 31)};
+                                pokemon.getPokemon().getStats().setIVs(new IVStore(newIVs));
                                 pokemon.setLocationAndAngles(x + RandomHelper.getRandomNumberBetween(2.75f, 6f), y, z + RandomHelper.getRandomNumberBetween(2.75f, 6f),0, 0);
                                 pokemon.updateStats();
                                 pokemon.getPokemon().setLevelNum(level);

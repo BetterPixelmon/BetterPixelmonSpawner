@@ -9,10 +9,12 @@ import com.lypaka.betterpixelmonspawner.Spawners.NPCSpawner;
 import com.lypaka.betterpixelmonspawner.Spawners.PokemonSpawner;
 import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
+import com.lypaka.pixelboosters.PixelBoosters;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.spawning.PixelmonSpawning;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -25,6 +27,13 @@ public class ServerStartedListener {
 
     @SubscribeEvent
     public static void onServerStarted (FMLServerStartedEvent event) throws ObjectMappingException {
+
+        if (ModList.get().isLoaded("pixelboosters")) {
+
+            BetterPixelmonSpawner.isPixelBoostersLoaded = true;
+            BetterPixelmonSpawner.logger.info("Detected PixelBoosters! Integrating...");
+
+        }
 
         HeldItemUtils.load();
         BetterPixelmonSpawner.logger.info("Registering Pokemon spawns...");
