@@ -91,19 +91,31 @@ public class MainSpawnMenu {
 
     private static Button getFishButton (ServerPlayerEntity player, String biome) {
 
+        FishSpawnList list = new FishSpawnList(player, biome);
+        list.build();
         Pokemon pixelmon = PokemonBuilder.builder().species("Magikarp").build();
         ItemStack magikarp = SpriteItemHelper.getPhoto(pixelmon);
-        magikarp.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for fishing!"));
-        return GooeyButton.builder()
-                .display(magikarp)
-                .onClick(() -> {
+        if (list.getSpawns().size() > 0) {
 
-                    FishSpawnList list = new FishSpawnList(player, biome);
-                    list.build();
-                    list.open(1);
+            magikarp.setDisplayName(FancyText.getFormattedText("&eClick me to view spawns for fishing!"));
+            return GooeyButton.builder()
+                    .display(magikarp)
+                    .onClick(() -> {
 
-                })
-                .build();
+                        list.open(1);
+
+                    })
+                    .build();
+
+        } else {
+
+            magikarp.setDisplayName(FancyText.getFormattedText("&eNo Pokemon spawn in this biome!"));
+            return GooeyButton.builder()
+                    .display(magikarp)
+                    .build();
+
+        }
+
 
     }
 

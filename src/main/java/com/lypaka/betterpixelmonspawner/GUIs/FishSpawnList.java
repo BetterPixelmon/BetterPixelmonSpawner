@@ -7,6 +7,7 @@ import ca.landonjw.gooeylibs2.api.page.GooeyPage;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.BiomeList;
 import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.FishingSpawnInfo;
+import com.lypaka.betterpixelmonspawner.PokemonSpawningInfo.PokemonSpawnInfo;
 import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.lypakautils.FancyText;
 import com.lypaka.lypakautils.ItemStackBuilder;
@@ -40,6 +41,12 @@ public class FishSpawnList {
         this.min = 0;
         this.max = 53;
         this.pages = new ArrayList<>();
+
+    }
+
+    public Map<Integer, List<FishingSpawnInfo>> getSpawns() {
+
+        return this.spawns;
 
     }
 
