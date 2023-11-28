@@ -12,11 +12,9 @@ import com.lypaka.betterpixelmonspawner.Utils.LegendaryInfoGetters;
 import com.lypaka.betterpixelmonspawner.Utils.LegendaryListing;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.LegendaryUtils;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.ItemStackBuilder;
-import com.lypaka.lypakautils.JoinListener;
-import com.lypaka.lypakautils.WorldDimGetter;
-import com.lypaka.pixelboosters.Boosters.BoosterTask;
-import com.lypaka.pixelboosters.PixelBoosters;
+import com.lypaka.lypakautils.MiscHandlers.ItemStackBuilder;
+import com.lypaka.lypakautils.Listeners.JoinListener;
+import com.lypaka.lypakautils.WorldStuff.WorldDimGetter;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonBuilder;
 import com.pixelmonmod.pixelmon.api.pokemon.stats.IVStore;
@@ -111,53 +109,7 @@ public class LegendarySpawner {
 
                 } else {
 
-                    if (BetterPixelmonSpawner.isPixelBoostersLoaded) {
-
-                        BoosterTask legendaryTask = null;
-                        for (BoosterTask task : BoosterTask.activeTasks) {
-
-                            if (task.getBooster().getBooster().equalsIgnoreCase("Legendary")) {
-
-                                legendaryTask = task;
-                                break;
-
-                            }
-
-                        }
-                        if (legendaryTask != null) {
-
-                            List<UUID> boostedPlayerUUIDs = legendaryTask.playerList;
-                            if (boostedPlayerUUIDs.size() > 0) {
-
-                                double boostedChance = PixelBoosters.boosterConfigManager.getConfigNode(com.lypaka.pixelboosters.Config.ConfigGetters.getIndexFromBooster("legendary"), "Option-1-Settings", "Boosted-Chance").getDouble();
-                                if (RandomHelper.getRandomChance(boostedChance)) {
-
-                                    UUID uuid = RandomHelper.getRandomElementFromList(boostedPlayerUUIDs);
-                                    player = JoinListener.playerMap.get(uuid);
-
-                                } else {
-
-                                    player = RandomHelper.getRandomElementFromList(onlinePlayers);
-
-                                }
-
-                            } else {
-
-                                player = RandomHelper.getRandomElementFromList(onlinePlayers);
-
-                            }
-
-                        } else {
-
-                            player = RandomHelper.getRandomElementFromList(onlinePlayers);
-
-                        }
-
-                    } else {
-
-                        player = RandomHelper.getRandomElementFromList(onlinePlayers);
-
-                    }
+                    player = RandomHelper.getRandomElementFromList(onlinePlayers);
 
                 }
                 String worldName = player.getServerWorld().getWorld().toString().replace("ServerLevel[", "").replace("]", "");
@@ -296,11 +248,11 @@ public class LegendarySpawner {
                                     List<LegendarySpawnInfo> infos = entry.getValue();
                                     for (LegendarySpawnInfo info : infos) {
 
-                                        if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase()))) {
+                                        if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase())) || info.getTime().equalsIgnoreCase("any")) {
 
-                                            if (info.getWeather().equalsIgnoreCase(weather)) {
+                                            if (info.getWeather().equalsIgnoreCase(weather) || info.getWeather().equalsIgnoreCase("any")) {
 
-                                                if (info.getSpawnLocation().contains(location)) {
+                                                if (info.getSpawnLocation().contains(location) || info.getSpawnLocation().equalsIgnoreCase("any")) {
 
                                                     if (!usedNames.contains(info.getName())) {
 

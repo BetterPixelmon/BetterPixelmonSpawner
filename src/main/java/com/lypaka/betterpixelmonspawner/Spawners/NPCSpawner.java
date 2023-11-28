@@ -7,7 +7,7 @@ import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.DebugSystem.NPCDebug;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.NPCCounter;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.EntityUtils;
-import com.lypaka.lypakautils.JoinListener;
+import com.lypaka.lypakautils.Listeners.JoinListener;
 import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
 import com.pixelmonmod.pixelmon.entities.npcs.*;
 import com.pixelmonmod.pixelmon.entities.npcs.registry.GeneralNPCData;

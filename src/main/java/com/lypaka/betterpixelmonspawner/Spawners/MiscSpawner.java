@@ -7,7 +7,7 @@ import com.lypaka.betterpixelmonspawner.DeadZones.DeadZone;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.MiscCounter;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.EntityUtils;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.JoinListener;
+import com.lypaka.lypakautils.Listeners.JoinListener;
 import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
 import com.pixelmonmod.pixelmon.entities.WormholeEntity;
 import net.minecraft.entity.LivingEntity;

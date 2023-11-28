@@ -5,7 +5,7 @@ import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.betterpixelmonspawner.ExternalAbilities.CompoundEyes;
 import com.lypaka.betterpixelmonspawner.ExternalAbilities.SuperLuck;
-import com.lypaka.lypakautils.ItemStackBuilder;
+import com.lypaka.lypakautils.MiscHandlers.ItemStackBuilder;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.util.helpers.RandomHelper;
 import com.pixelmonmod.pixelmon.comm.EnumUpdateType;

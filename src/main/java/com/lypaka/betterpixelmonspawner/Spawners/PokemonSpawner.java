@@ -18,9 +18,9 @@ import com.lypaka.betterpixelmonspawner.Utils.HeldItemUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.BossPokemonUtils;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.PokemonUtils;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.ItemStackBuilder;
-import com.lypaka.lypakautils.JoinListener;
-import com.lypaka.lypakautils.WorldDimGetter;
+import com.lypaka.lypakautils.MiscHandlers.ItemStackBuilder;
+import com.lypaka.lypakautils.Listeners.JoinListener;
+import com.lypaka.lypakautils.WorldStuff.WorldDimGetter;
 import com.pixelmonmod.pixelmon.api.config.PixelmonConfigProxy;
 import com.pixelmonmod.pixelmon.api.pokemon.Element;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
@@ -195,11 +195,11 @@ public class PokemonSpawner {
                                         List<PokemonSpawnInfo> infos = entry.getValue();
                                         for (PokemonSpawnInfo info : infos) {
 
-                                            if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase()))) {
+                                            if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase())) || info.getTime().equalsIgnoreCase("any")) {
 
-                                                if (info.getWeather().equalsIgnoreCase(weather)) {
+                                                if (info.getWeather().equalsIgnoreCase(weather) || info.getWeather().equalsIgnoreCase("any")) {
 
-                                                    if (info.getSpawnLocation().contains(location)) {
+                                                    if (info.getSpawnLocation().contains(location) || info.getSpawnLocation().equalsIgnoreCase("any")) {
 
                                                         if (!usedNames.contains(info.getName())) {
 

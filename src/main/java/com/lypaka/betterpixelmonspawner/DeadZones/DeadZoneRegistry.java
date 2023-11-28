@@ -2,7 +2,7 @@ package com.lypaka.betterpixelmonspawner.DeadZones;
 
 import com.google.common.reflect.TypeToken;
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
-import com.lypaka.lypakautils.WorldMap;
+import com.lypaka.lypakautils.WorldStuff.WorldMap;
 import net.minecraft.world.server.ServerWorld;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 

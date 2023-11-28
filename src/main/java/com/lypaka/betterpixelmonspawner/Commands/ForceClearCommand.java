@@ -5,7 +5,7 @@ import com.lypaka.betterpixelmonspawner.Listeners.JoinListener;
 import com.lypaka.betterpixelmonspawner.PokeClear.ClearTask;
 import com.lypaka.betterpixelmonspawner.Utils.Counters.PokemonCounter;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.PermissionHandler;
+import com.lypaka.lypakautils.MiscHandlers.PermissionHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -44,7 +44,7 @@ public class ForceClearCommand {
                                                     JoinListener.pokemonMap.entrySet().removeIf(entry -> {
 
                                                         PokemonCounter.checkForDespawnPokemon(entry.getKey());
-                                                        if (!com.lypaka.lypakautils.JoinListener.playerMap.containsKey(entry.getKey())) {
+                                                        if (!com.lypaka.lypakautils.Listeners.JoinListener.playerMap.containsKey(entry.getKey())) {
 
                                                             return true;
 
@@ -62,7 +62,7 @@ public class ForceClearCommand {
                                                     }
 
                                                     String finalMsg = msg;
-                                                    for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+                                                    for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.Listeners.JoinListener.playerMap.entrySet()) {
 
                                                         entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(ClearTask.count))), entry.getValue().getUniqueID());
 

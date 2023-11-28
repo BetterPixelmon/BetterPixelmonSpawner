@@ -13,6 +13,10 @@ import com.lypaka.betterpixelmonspawner.Utils.LegendaryInfoGetters;
 import com.lypaka.betterpixelmonspawner.Utils.LegendaryListing;
 import com.lypaka.betterpixelmonspawner.Utils.PokemonUtils.LegendaryUtils;
 import com.lypaka.lypakautils.*;
+import com.lypaka.lypakautils.Listeners.JoinListener;
+import com.lypaka.lypakautils.MiscHandlers.ItemStackBuilder;
+import com.lypaka.lypakautils.MiscHandlers.PermissionHandler;
+import com.lypaka.lypakautils.WorldStuff.WorldDimGetter;
 import com.mojang.brigadier.CommandDispatcher;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonBuilder;
@@ -233,11 +237,11 @@ public class DoLegendarySpawnCommand {
                                                                     List<LegendarySpawnInfo> infos = entry.getValue();
                                                                     for (LegendarySpawnInfo info : infos) {
 
-                                                                        if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase()))) {
+                                                                        if (currentTimes.contains(WorldTime.valueOf(info.getTime().toUpperCase())) || info.getTime().equalsIgnoreCase("any")) {
 
-                                                                            if (info.getWeather().equalsIgnoreCase(weather)) {
+                                                                            if (info.getWeather().equalsIgnoreCase(weather) || info.getWeather().equalsIgnoreCase("any")) {
 
-                                                                                if (info.getSpawnLocation().contains(location)) {
+                                                                                if (info.getSpawnLocation().contains(location) || info.getSpawnLocation().equalsIgnoreCase("any")) {
 
                                                                                     if (!usedNames.contains(info.getName())) {
 

@@ -22,8 +22,8 @@ public class RespawnListener {
     private static void putTheBitchBackIfMissing (ServerPlayerEntity player) {
 
         UUID uuid = player.getUniqueID();
-        com.lypaka.lypakautils.JoinListener.playerMap.entrySet().removeIf(entry -> entry.getKey().toString().equalsIgnoreCase(uuid.toString()));
-        com.lypaka.lypakautils.JoinListener.playerMap.put(uuid, player);
+        com.lypaka.lypakautils.Listeners.JoinListener.playerMap.entrySet().removeIf(entry -> entry.getKey().toString().equalsIgnoreCase(uuid.toString()));
+        com.lypaka.lypakautils.Listeners.JoinListener.playerMap.put(uuid, player);
         if (!MiscCounter.miscCountMap.containsKey(uuid)) {
 
             MiscCounter.miscCountMap.put(uuid, 0);

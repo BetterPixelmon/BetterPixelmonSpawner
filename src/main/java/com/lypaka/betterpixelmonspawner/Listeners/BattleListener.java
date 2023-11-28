@@ -2,8 +2,8 @@ package com.lypaka.betterpixelmonspawner.Listeners;
 
 import com.lypaka.betterpixelmonspawner.Config.ConfigGetters;
 import com.lypaka.lypakautils.FancyText;
-import com.lypaka.lypakautils.JoinListener;
-import com.pixelmonmod.pixelmon.api.events.BattleStartedEvent;
+import com.lypaka.lypakautils.Listeners.JoinListener;
+import com.pixelmonmod.pixelmon.api.events.battles.BattleStartedEvent;
 import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
 import com.pixelmonmod.pixelmon.battles.controller.BattleController;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
@@ -21,7 +21,7 @@ public class BattleListener {
 
         WildPixelmonParticipant wpp = null;
         PlayerParticipant pp = null;
-        BattleController bcb = event.bc;
+        BattleController bcb = event.getBattleController();
         if (bcb.participants.get(0) instanceof WildPixelmonParticipant && bcb.participants.get(1) instanceof PlayerParticipant) {
 
             wpp = (WildPixelmonParticipant) bcb.participants.get(0);

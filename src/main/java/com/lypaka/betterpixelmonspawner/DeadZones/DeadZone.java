@@ -1,7 +1,7 @@
 package com.lypaka.betterpixelmonspawner.DeadZones;
 
 import com.lypaka.betterpixelmonspawner.BetterPixelmonSpawner;
-import com.lypaka.lypakautils.WorldDimGetter;
+import com.lypaka.lypakautils.WorldStuff.WorldDimGetter;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 

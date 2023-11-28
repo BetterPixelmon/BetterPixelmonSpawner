@@ -46,7 +46,7 @@ public class ClearTask {
             @Override
             public void run() {
 
-                for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+                for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.Listeners.JoinListener.playerMap.entrySet()) {
 
                     entry.getValue().sendMessage(FancyText.getFormattedText(ConfigGetters.clearWarningMessage), entry.getValue().getUniqueID());
 
@@ -61,7 +61,7 @@ public class ClearTask {
                             JoinListener.pokemonMap.entrySet().removeIf(entry -> {
 
                                 PokemonCounter.checkForDespawnPokemon(entry.getKey());
-                                if (!com.lypaka.lypakautils.JoinListener.playerMap.containsKey(entry.getKey())) {
+                                if (!com.lypaka.lypakautils.Listeners.JoinListener.playerMap.containsKey(entry.getKey())) {
 
                                     return true;
 
@@ -79,7 +79,7 @@ public class ClearTask {
                             }
 
                             String finalMsg = msg;
-                            for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.JoinListener.playerMap.entrySet()) {
+                            for (Map.Entry<UUID, ServerPlayerEntity> entry : com.lypaka.lypakautils.Listeners.JoinListener.playerMap.entrySet()) {
 
                                 entry.getValue().sendMessage(FancyText.getFormattedText(finalMsg.replace("%number%", String.valueOf(count))), entry.getValue().getUniqueID());
 
